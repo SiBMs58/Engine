@@ -13,6 +13,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         Figure figure;
         int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
         int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
+
         // Point
         for (int k = 0; k < nrPoints; ++k) {
             // Maak een punt aan
@@ -45,15 +46,38 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         // Schalen
         double scale = configuration["Figure"+to_string(i)]["scale"].as_double_or_die();
         Matrix scaleMatrix = figure.scaleFigure(scale);
+        // RotateX
         double rotateX = configuration["Figure"+to_string(i)]["rotateX"].as_double_or_die();
         Matrix rotateXMatrix = figure.rotateX(rotateX);
+        applyTransformation(figure, rotateXMatrix);
+        // RotateT
         double rotateY = configuration["Figure"+to_string(i)]["rotateY"].as_double_or_die();
         Matrix rotateYMatrix = figure.rotateY(rotateY);
+        applyTransformation(figure, rotateYMatrix);
+        // RotateZ
         double rotateZ = configuration["Figure"+to_string(i)]["rotateZ"].as_double_or_die();
-        Matrix rotatezMatrix = figure.rotateZ(rotateZ);
+        Matrix rotateZMatrix = figure.rotateZ(rotateZ);
+        applyTransformation(figure, rotateZMatrix);
+        // Translatie over vector
+        vector<double> vectorCenter = configuration["Figure"+to_string(i)]["center"].as_double_tuple_or_die();
+        Vector3D translatieVector;
+        translatieVector.x = vectorCenter[0];
+        translatieVector.y = vectorCenter[1];
+        translatieVector.z = vectorCenter[2];
+        Matrix translationMatrix = figure.translate(translatieVector);
+        applyTransformation(figure, translationMatrix);
 
         figures.push_back(figure);
     }
     return figures;
 }
 
+void Lsystem::applyTransformation(Figure &fig, const Matrix &m) {
+    for (int i = 0; i < fig.points.size(); ++i) {
+        fig.points[i] = fig.points[i]*m;
+    }
+}
+
+Matrix Lsystem::eyePointTrans(const Vector3D &eyepoint){
+
+}

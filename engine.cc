@@ -1,6 +1,7 @@
 #include "easy_image.h"
 #include "ini_configuration.h"
 #include "l_parser.h"
+#include "vector3d.h"
 
 #include <fstream>
 #include <iostream>
@@ -8,14 +9,13 @@
 #include <string>
 #include <cmath>
 #include <vector>
-#include "3DLsystem/vector3d.h"
-#include "3DLsystem/Lsystem.h"
 
+#include "3DLsystem/Lsystem.h"
 #include "2DLsystem/Lsystem2D.h"
 
 using namespace std;
 
-//using Lines2D = vector<Line2D>;
+using Lines2D = vector<Line2D>;
 
 img::EasyImage generate_image(const ini::Configuration &configuration)
 {
@@ -23,11 +23,11 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
     img::EasyImage image;
     // General
     string type = configuration["General"]["type"].as_string_or_die();
-    /*if (type == "2DLSystem"){
+    if (type == "2DLSystem"){
         // Maak een parser aan
-        //LParser::LSystem2D LParser2D;
+        LParser::LSystem2D LParser2D;
         // Maak een Lsystem - 2DLsystem
-        //Lsystem lsystem;
+        Lsystem2D lsystem;
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
         vector<double> lineColor = configuration["2DLSystem"]["color"].as_double_tuple_or_die();
@@ -40,45 +40,13 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         // Teken L systeem
         Lines2D lines = lsystem.drawLSystem(LParser2D, lineColor);
         image = lsystem.draw2DLines(lines, size, backgroundColor);
-    }*/
+    }
     if (type == "Wireframe"){
         Lsystem lystem3D;
         vector<Figure> figures;
         figures = lystem3D.generateFigures(configuration);
         int size = configuration["General"]["size"].as_int_or_die();
-        cout << "Size of figures " << figures.size() << endl;
-        /*//Matrices worden geïnitialiseerd
-        //op de eenheidsmatrix
-        Matrix rot_z;
-        cout << "Unity: " << endl << rot_z << std::endl;
-        //Elementen kunnen individueel
-        //aangepast worden en worden
-        //vanaf 1 geïndexeerd
-        rot_z(1,1) = 0;
-        rot_z(1,2) = -1;
-        rot_z(2,1) = 1;
-        rot_z(2,2) = 0;
-        cout << "Z-axis Rotation" << rot_z << endl;
-         */
-
-        /*Vector3D a = Vector3D::point(1.0, 2.0, 1.5);
-        Vector3D b = a;
-        Vector3D q = Vector3D::vector(2.0, 1.0, 3.5);
-        Vector3D p = q;
-        //Vector3D zorgt voor de
-        //Correcte punt <-> vector omzetting
-        cout << "a+q=" << a+q << endl;
-        cout << "p+q=" << p+q << endl;
-        cout << "b-a=" << b-a << endl;
-        cout << endl;
-        //Punten en vectoren blijven
-        //Punten en vectoren wanneer ze
-        //Geschaald worden
-        cout << "2*a=" << 2*a << endl;
-        cout << "2*q=" << 2*q << endl;
-         */
     }
-
     return image;
 }
 
