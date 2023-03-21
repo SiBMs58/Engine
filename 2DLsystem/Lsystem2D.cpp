@@ -33,7 +33,7 @@ string getReplacementRule(const LParser::LSystem2D &Lsystem) {
     return replacementRule;
 }
 
-img::EasyImage Lsystem::draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor) {
+img::EasyImage Lsystem2D::draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor) {
     // 1. Bepaal Xmin, Xmax, Ymin en Ymax
     double Xmax = lines[0].p1.x;
     double Xmin = lines[0].p1.x;
@@ -111,7 +111,7 @@ img::EasyImage Lsystem::draw2DLines(Lines2D &lines, const int size, const vector
     return image;
 }
 
-Lines2D Lsystem::drawLSystem(const LParser::LSystem2D &l_system, const vector<double> &lineColor) {
+Lines2D Lsystem2D::drawLSystem(const LParser::LSystem2D &l_system, const vector<double> &lineColor) {
     // Maak lines2D aan
     Lines2D lines;
     double startingAngle = l_system.get_starting_angle();

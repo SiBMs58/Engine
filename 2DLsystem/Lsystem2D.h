@@ -2,8 +2,8 @@
 // Created by Siebe Mees on 10/03/2023.
 //
 
-#ifndef ENGINE_LSYSTEM_H
-#define ENGINE_LSYSTEM_H
+#ifndef ENGINE_LSYSTEM2D_H
+#define ENGINE_LSYSTEM2D_H
 
 #include <string>
 #include <stack>
@@ -16,7 +16,7 @@ using namespace std;
 
 using Lines2D = vector<Line2D>;
 
-class Lsystem {
+class Lsystem2D {
 private:
     stack<Point2D> positionStack;
     stack<double> angleStack;
@@ -25,4 +25,4 @@ public:
     img::EasyImage draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor);
 };
 
-#endif //ENGINE_LSYSTEM_H
+#endif //ENGINE_LSYSTEM2D_H
