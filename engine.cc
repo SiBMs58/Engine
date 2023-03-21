@@ -43,8 +43,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
     }
     if (type == "Wireframe"){
         Lsystem lystem3D;
-        vector<Figure> figures;
-        figures = lystem3D.generateFigures(configuration);
+        vector<Figure> figures = lystem3D.generateFigures(configuration);
         int size = configuration["General"]["size"].as_int_or_die();
     }
     return image;

@@ -79,5 +79,19 @@ void Lsystem::applyTransformation(Figure &fig, const Matrix &m) {
 }
 
 Matrix Lsystem::eyePointTrans(const Vector3D &eyepoint){
+    // 1. Omzetten van carthesische naar poolcoördinaten
+    //toPolar();
+    // 2. Transformatiematrix opstellen:
+    Matrix transformatieMatrix;
+    transformatieMatrix(1, 1) = -sin(phi);
+}
 
+void toPolar(Vector3D &point){
+    double r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
+    double theta = atan2(point.y, point.x);
+    double phi = acos(r);
+
+    point.x = (r*sin(phi)*cos(theta));
+    point.y = (r*sin(phi)*sin(theta));
+    point.z = r*cos(phi);
 }

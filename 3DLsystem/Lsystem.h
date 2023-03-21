@@ -15,6 +15,7 @@ public:
     vector<Figure> generateFigures(const ini::Configuration &configuration);
     void applyTransformation(Figure &fig, const Matrix &m);
     Matrix eyePointTrans(const Vector3D &eyepoint);
+    void toPolar(const Vector3D &point);
 };
 
 
