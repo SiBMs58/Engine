@@ -129,8 +129,25 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
     for (int i = 0; i < figures.size(); ++i) {
         // Loop trough all the faces
         for (int j = 0; j < figures[i].faces.size(); ++j) {
-            int point_index1 = figures[i].faces[j].point_indexes[0];
-            int point_index2 = figures[i].faces[j].point_indexes[1];
+            for (int k = 0; k < figures[i].faces[j].point_indexes.size()-1; ++k) {
+                int point_index1 = figures[i].faces[j].point_indexes[k];
+                int point_index2 = figures[i].faces[j].point_indexes[k+1];
+                Vector3D vectorPoint1;
+                vectorPoint1.x = figures[i].points[point_index1].x;
+                vectorPoint1.y = figures[i].points[point_index1].y;
+                vectorPoint1.z = figures[i].points[point_index1].z;
+                Vector3D vectorPoint2;
+                vectorPoint2.x = figures[i].points[point_index2].x;
+                vectorPoint2.y = figures[i].points[point_index2].y;
+                vectorPoint2.z = figures[i].points[point_index2].z;
+                Point2D point1 = generatePoint2D(vectorPoint1, 1);
+                Point2D point2 = generatePoint2D(vectorPoint2, 1);
+                Line2D line = Line2D(point1, point2, figures[i].color);
+                lines.push_back(line);
+            }
+            // Add line from last point_index to first one
+            int point_index1 = figures[i].faces[j].point_indexes[figures[i].faces[j].point_indexes.size()-1];
+            int point_index2 = figures[i].faces[j].point_indexes[0];
             Vector3D vectorPoint1;
             vectorPoint1.x = figures[i].points[point_index1].x;
             vectorPoint1.y = figures[i].points[point_index1].y;
