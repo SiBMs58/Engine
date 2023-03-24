@@ -10,7 +10,7 @@ Matrix Figure::scaleFigure(const double scale){
     scaleMatrix(1,1) = scale;
     scaleMatrix(2,2) = scale;
     scaleMatrix(3,3) = scale;
-    scaleMatrix(4,4) = scale;
+    scaleMatrix(4,4) = 1;
     return scaleMatrix;
 }
 

@@ -42,9 +42,16 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         image = lsystem.draw2DLines(lines, size, backgroundColor);
     }
     if (type == "Wireframe"){
+        // Maak een lsystem3D
         Lsystem lystem3D;
+        // Maak een Lsystem - 2DLsystem voor draw2DLines function
+        Lsystem2D lsystem;
         vector<Figure> figures = lystem3D.generateFigures(configuration);
+        Lines2D lines = lystem3D.doProjection(figures);
+        // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
+        vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
+        image = lsystem.draw2DLines(lines, size, backgroundColor);
     }
     return image;
 }
