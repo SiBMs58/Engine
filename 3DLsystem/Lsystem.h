@@ -21,6 +21,9 @@ public:
     void toPolar(const Vector3D &point, double &theta, double &phi, double &r);
     Lines2D doProjection(const Figures3D &figures);
     Point2D generatePoint2D(const Vector3D &point,const double d);
+    Figure createCube();
+    Figure createTetrahedron();
+    Figure createLSystem();
 };
 
 

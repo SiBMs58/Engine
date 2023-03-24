@@ -11,26 +11,33 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
     for (int i = 0; i < nrFigures; ++i) {
         // Maak een figuur aan
         Figure figure;
-        int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
-        int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
-
-        // Point
-        for (int k = 0; k < nrPoints; ++k) {
-            // Maak een punt aan
-            Vector3D points;
-            vector<double> vectorPoints = configuration["Figure"+to_string(i)]["point" + to_string(k)].as_double_tuple_or_die();
-            points.x = vectorPoints[0];
-            points.y = vectorPoints[1];
-            points.z = vectorPoints[2];
-            figure.points.push_back(points);
-        }
-
-        // Face
-        for (int j = 0; j < nrLines; ++j) {
-            // Maak een Face aan
-            Face face;
-            face.point_indexes = configuration["Figure"+to_string(i)]["line" + to_string(j)].as_int_tuple_or_die();
-            figure.faces.push_back(face);
+        string figureType = configuration["Figure"+to_string(i)]["type"].as_string_or_die();
+        if (figureType == "Cube"){
+            figure = createCube();
+        } else if (figureType == "3DLSystem") {
+            figure = createLSystem();
+        } else if (figureType == "Tetrahedron") {
+            figure = createTetrahedron();
+        } else {
+            int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
+            int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
+            // Point
+            for (int k = 0; k < nrPoints; ++k) {
+                // Maak een punt aan
+                Vector3D points;
+                vector<double> vectorPoints = configuration["Figure"+to_string(i)]["point" + to_string(k)].as_double_tuple_or_die();
+                points.x = vectorPoints[0];
+                points.y = vectorPoints[1];
+                points.z = vectorPoints[2];
+                figure.points.push_back(points);
+            }
+            // Face
+            for (int j = 0; j < nrLines; ++j) {
+                // Maak een Face aan
+                Face face;
+                face.point_indexes = configuration["Figure"+to_string(i)]["line" + to_string(j)].as_int_tuple_or_die();
+                figure.faces.push_back(face);
+            }
         }
 
         // Color
@@ -95,7 +102,7 @@ void Lsystem::applyTransformation(Figures3D &figs, const Matrix &m) {
     }
 }
 
-void toPolar(const Vector3D &point, double &theta, double &phi, double &r){
+void Lsystem::toPolar(const Vector3D &point, double &theta, double &phi, double &r){
     r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
     theta = atan2(point.y, point.x);
     phi = acos((point.z/r));
@@ -106,7 +113,7 @@ Matrix Lsystem::eyePointTrans(Vector3D &eyepoint){
     double theta = 0;
     double phi =0;
     // 1. Omzetten van carthesische naar poolcoördinaten
-    ::toPolar(eyepoint, theta, phi, r);
+    Lsystem::toPolar(eyepoint, theta, phi, r);
     // 2. eyePointTransformationMatrix opstellen:
     Matrix eyePointTransformationMatrix;
     eyePointTransformationMatrix(1, 1) = -sin(theta);
@@ -170,4 +177,171 @@ Point2D Lsystem::generatePoint2D(const Vector3D &vectorPoint,const double d) {
     point.x = (d*vectorPoint.x)/-vectorPoint.z;
     point.y = (d*vectorPoint.y)/-vectorPoint.z;
     return point;
+}
+
+Figure Lsystem::createCube() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D point1;
+    point1.z = 1;
+    point1.y = -1;
+    point1.x = -1;
+    figure.points.push_back(point1);
+    Vector3D point2;
+    point2.z = -1;
+    point2.y = 1;
+    point2.x = -1;
+    figure.points.push_back(point2);
+    Vector3D point3;
+    point3.z = 1;
+    point3.y = 1;
+    point3.x = 1;
+    figure.points.push_back(point3);
+    Vector3D point4;
+    point4.z = -1;
+    point4.y = -1;
+    point4.x = 1;
+    figure.points.push_back(point4);
+    Vector3D point5;
+    point5.z = 1;
+    point5.y = 1;
+    point5.x = -1;
+    figure.points.push_back(point5);
+    Vector3D point6;
+    point6.z = -1;
+    point6.y = -1;
+    point6.x = -1;
+    figure.points.push_back(point6);
+    Vector3D point7;
+    point7.z = 1;
+    point7.y = -1;
+    point7.x = 1;
+    figure.points.push_back(point7);
+    Vector3D point8;
+    point8.z = -1;
+    point8.y = 1;
+    point8.x = 1;
+    figure.points.push_back(point8);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(5);
+    face1.point_indexes.push_back(3);
+    face1.point_indexes.push_back(7);
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(5);
+    face2.point_indexes.push_back(2);
+    face2.point_indexes.push_back(8);
+    face2.point_indexes.push_back(3);
+    figure.faces.push_back(face2);
+    Face face3;
+    face3.point_indexes.push_back(2);
+    face3.point_indexes.push_back(6);
+    face3.point_indexes.push_back(4);
+    face3.point_indexes.push_back(8);
+    figure.faces.push_back(face3);
+    Face face4;
+    face4.point_indexes.push_back(6);
+    face4.point_indexes.push_back(1);
+    face4.point_indexes.push_back(7);
+    face4.point_indexes.push_back(4);
+    figure.faces.push_back(face4);
+    Face face5;
+    face5.point_indexes.push_back(7);
+    face5.point_indexes.push_back(3);
+    face5.point_indexes.push_back(8);
+    face5.point_indexes.push_back(4);
+    figure.faces.push_back(face5);
+    Face face6;
+    face6.point_indexes.push_back(1);
+    face6.point_indexes.push_back(6);
+    face6.point_indexes.push_back(2);
+    face6.point_indexes.push_back(5);
+    figure.faces.push_back(face6);
+
+    return figure;
+}
+
+Figure Lsystem::createTetrahedron() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D point1;
+    point1.x = 1;
+    point1.y = -1;
+    point1.z = -1;
+    figure.points.push_back(point1);
+    Vector3D point2;
+    point2.x = -1;
+    point2.y = 1;
+    point2.z = -1;
+    figure.points.push_back(point2);
+    Vector3D point3;
+    point3.x = 1;
+    point3.y = 1;
+    point3.z = 1;
+    figure.points.push_back(point3);
+    Vector3D point4;
+    point4.x = -1;
+    point4.y = -1;
+    point4.z = 1;
+    figure.points.push_back(point4);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(3);
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(2);
+    face2.point_indexes.push_back(4);
+    face2.point_indexes.push_back(3);
+    figure.faces.push_back(face2);
+    Face face3;
+    face3.point_indexes.push_back(1);
+    face3.point_indexes.push_back(4);
+    face3.point_indexes.push_back(2);
+    figure.faces.push_back(face3);
+    Face face4;
+    face4.point_indexes.push_back(1);
+    face4.point_indexes.push_back(3);
+    face4.point_indexes.push_back(4);
+    figure.faces.push_back(face4);
+
+    return figure;
+}
+
+Figure Lsystem::createLSystem() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    // Punten
+    Vector3D point1;
+    point1.x = 1;
+    point1.y = -1;
+    point1.z = -1;
+    figure.points.push_back(point1);
+    Vector3D point2;
+    point2.x = -1;
+    point2.y = 1;
+    point2.z = -1;
+    figure.points.push_back(point2);
+    Vector3D point3;
+    point3.x = 1;
+    point3.y = 1;
+    point3.z = 1;
+    figure.points.push_back(point3);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(1);
+    face2.point_indexes.push_back(3);
+    figure.faces.push_back(face2);
+
+    return figure;
 }
