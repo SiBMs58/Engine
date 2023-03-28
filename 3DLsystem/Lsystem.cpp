@@ -22,6 +22,19 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             figure = createIcosahedron();
         } else if (figureType == "Octahedron"){
             figure = createOctahedron();
+        } else if (figureType == "Dodecahedron"){
+            figure = createDodecahedron();
+        } else if (figureType == "Cone") {
+            int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
+            double height = configuration["Figure"+to_string(i)]["height"].as_double_or_die();
+            figure = createCone(n, height);
+        } else if (figureType == "Cylinder"){
+            int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
+            double height = configuration["Figure"+to_string(i)]["height"].as_double_or_die();
+            figure = createCylinder(n, height);
+        } else if (figureType == "Sphere"){
+            int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
+            figure = createSphere( ,n)
         }
         else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
@@ -283,39 +296,6 @@ Figure Lsystem::createCube() {
         face6.point_indexes[i] -= 1;
     }
     figure.faces.push_back(face6);
-
-    return figure;
-}
-
-Figure Lsystem::createLSystem() {
-    // Maak een figuur aan
-    Figure figure;
-    // Punten
-    // Punten
-    Vector3D point1;
-    point1.x = 1;
-    point1.y = -1;
-    point1.z = -1;
-    figure.points.push_back(point1);
-    Vector3D point2;
-    point2.x = -1;
-    point2.y = 1;
-    point2.z = -1;
-    figure.points.push_back(point2);
-    Vector3D point3;
-    point3.x = 1;
-    point3.y = 1;
-    point3.z = 1;
-    figure.points.push_back(point3);
-    // Faces
-    Face face1;
-    face1.point_indexes.push_back(1);
-    face1.point_indexes.push_back(2);
-    figure.faces.push_back(face1);
-    Face face2;
-    face2.point_indexes.push_back(1);
-    face2.point_indexes.push_back(3);
-    figure.faces.push_back(face2);
 
     return figure;
 }
@@ -673,6 +653,249 @@ Figure Lsystem::createOctahedron() {
         face8.point_indexes[i] -= 1;
     }
     figure.faces.push_back(face8);
+
+    return figure;
+}
+
+Figure Lsystem::createDodecahedron() {
+    // Maak een figuur aan
+    Figure figure;
+    Figure icosahedron = createIcosahedron();
+    // Punten
+    for (int i = 0; i < icosahedron.faces.size(); ++i) {
+        Vector3D point;
+        vector<int> pointIndexes = icosahedron.faces[i].point_indexes;
+        point.x = (icosahedron.points[pointIndexes[0]].x+icosahedron.points[pointIndexes[1]].x+icosahedron.points[pointIndexes[2]].x)/pointIndexes.size();
+        point.y = (icosahedron.points[pointIndexes[0]].y+icosahedron.points[pointIndexes[1]].y+icosahedron.points[pointIndexes[2]].y)/pointIndexes.size();
+        point.z = (icosahedron.points[pointIndexes[0]].z+icosahedron.points[pointIndexes[1]].z+icosahedron.points[pointIndexes[2]].z)/pointIndexes.size();
+        figure.points.push_back(point);
+    }
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(3);
+    face1.point_indexes.push_back(4);
+    face1.point_indexes.push_back(5);
+    for (int i = 0; i < face1.point_indexes.size(); ++i) {
+        face1.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(1);
+    face2.point_indexes.push_back(6);
+    face2.point_indexes.push_back(7);
+    face2.point_indexes.push_back(8);
+    face2.point_indexes.push_back(2);
+    for (int i = 0; i < face2.point_indexes.size(); ++i) {
+        face2.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face2);
+    Face face3;
+    face3.point_indexes.push_back(2);
+    face3.point_indexes.push_back(8);
+    face3.point_indexes.push_back(9);
+    face3.point_indexes.push_back(10);
+    face3.point_indexes.push_back(3);
+    for (int i = 0; i < face3.point_indexes.size(); ++i) {
+        face3.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face3);
+    Face face4;
+    face4.point_indexes.push_back(3);
+    face4.point_indexes.push_back(10);
+    face4.point_indexes.push_back(11);
+    face4.point_indexes.push_back(12);
+    face4.point_indexes.push_back(4);
+    for (int i = 0; i < face4.point_indexes.size(); ++i) {
+        face4.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face4);
+    Face face5;
+    face5.point_indexes.push_back(4);
+    face5.point_indexes.push_back(12);
+    face5.point_indexes.push_back(13);
+    face5.point_indexes.push_back(14);
+    face5.point_indexes.push_back(5);
+    for (int i = 0; i < face5.point_indexes.size(); ++i) {
+        face5.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face5);
+    Face face6;
+    face6.point_indexes.push_back(5);
+    face6.point_indexes.push_back(14);
+    face6.point_indexes.push_back(15);
+    face6.point_indexes.push_back(6);
+    face6.point_indexes.push_back(1);
+    for (int i = 0; i < face6.point_indexes.size(); ++i) {
+        face6.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face6);
+    Face face7;
+    face7.point_indexes.push_back(20);
+    face7.point_indexes.push_back(19);
+    face7.point_indexes.push_back(18);
+    face7.point_indexes.push_back(17);
+    face7.point_indexes.push_back(16);
+    for (int i = 0; i < face7.point_indexes.size(); ++i) {
+        face7.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face7);
+    Face face8;
+    face8.point_indexes.push_back(20);
+    face8.point_indexes.push_back(15);
+    face8.point_indexes.push_back(14);
+    face8.point_indexes.push_back(13);
+    face8.point_indexes.push_back(19);
+    for (int i = 0; i < face8.point_indexes.size(); ++i) {
+        face8.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face8);
+    Face face9;
+    face9.point_indexes.push_back(19);
+    face9.point_indexes.push_back(13);
+    face9.point_indexes.push_back(12);
+    face9.point_indexes.push_back(11);
+    face9.point_indexes.push_back(18);
+    for (int i = 0; i < face9.point_indexes.size(); ++i) {
+        face9.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face9);
+    Face face10;
+    face10.point_indexes.push_back(18);
+    face10.point_indexes.push_back(11);
+    face10.point_indexes.push_back(10);
+    face10.point_indexes.push_back(9);
+    face10.point_indexes.push_back(17);
+    for (int i = 0; i < face10.point_indexes.size(); ++i) {
+        face10.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face10);
+    Face face11;
+    face11.point_indexes.push_back(17);
+    face11.point_indexes.push_back(9);
+    face11.point_indexes.push_back(8);
+    face11.point_indexes.push_back(7);
+    face11.point_indexes.push_back(16);
+    for (int i = 0; i < face11.point_indexes.size(); ++i) {
+        face11.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face11);
+    Face face12;
+    face12.point_indexes.push_back(16);
+    face12.point_indexes.push_back(7);
+    face12.point_indexes.push_back(6);
+    face12.point_indexes.push_back(15);
+    face12.point_indexes.push_back(20);
+    for (int i = 0; i < face12.point_indexes.size(); ++i) {
+        face12.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face12);
+
+    return figure;
+}
+
+Figure Lsystem::createCone(const int n, const double h) {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D pointN;
+    pointN.x = 0;
+    pointN.y = 0;
+    pointN.z = h;
+    figure.points.push_back(pointN);
+    for (int i = 0; i < n+1; ++i) {
+        Vector3D point;
+        point.x = cos((2*i*M_PI)/n);
+        point.y = sin((2*i*M_PI)/n);
+        point.z = 0;
+        figure.points.push_back(point);
+    }
+    // Faces
+    for (int i = 0; i < n+1; ++i) {
+        Face face;
+        face.point_indexes.push_back(1);
+        face.point_indexes.push_back(i+1);
+        face.point_indexes.push_back(i+2);
+        for (int i = 0; i < face.point_indexes.size(); ++i) {
+            face.point_indexes[i] -= 1;
+        }
+        figure.faces.push_back(face);
+    }
+
+    return figure;
+}
+
+Figure Lsystem::createCylinder(const int n, const double h) {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    for (int i = 0; i < n+1; ++i) {
+        Vector3D pointBottom;
+        pointBottom.x = cos((2*i*M_PI)/n);
+        pointBottom.y = sin((2*i*M_PI)/n);
+        pointBottom.z = 0;
+        figure.points.push_back(pointBottom);
+    }
+    for (int i = 0; i < n+1; ++i) {
+        Vector3D pointTop;
+        pointTop.x = cos((2*i*M_PI)/n);
+        pointTop.y = sin((2*i*M_PI)/n);
+        pointTop.z = h;
+        figure.points.push_back(pointTop);
+    }
+    // Faces
+    for (int i = 0; i < n; ++i) {
+        Face face;
+        face.point_indexes.push_back(i);
+        face.point_indexes.push_back(i+1);
+        face.point_indexes.push_back(n+i+2);
+        face.point_indexes.push_back(n+i+1);
+        figure.faces.push_back(face);
+    }
+
+    return figure;
+}
+
+Figure Lsystem::createSphere(const double radius, const int n) {
+
+}
+
+Figure Lsystem::createLSystem() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D point1;
+    point1.x = 1;
+    point1.y = 0;
+    point1.z = 0;
+    figure.points.push_back(point1);
+    Vector3D point2;
+    point2.x = 0;
+    point2.y = 1;
+    point2.z = 0;
+    figure.points.push_back(point2);
+    Vector3D point3;
+    point3.x = -1;
+    point3.y = 0;
+    point3.z = 0;
+    figure.points.push_back(point3);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(3);
+    for (int i = 0; i < face1.point_indexes.size(); ++i) {
+        face1.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(2);
+    face2.point_indexes.push_back(3);
+    face2.point_indexes.push_back(1);
+    for (int i = 0; i < face2.point_indexes.size(); ++i) {
+        face2.point_indexes[i] -= 1;
+    }
 
     return figure;
 }
