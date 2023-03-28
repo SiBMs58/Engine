@@ -18,7 +18,12 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             figure = createLSystem();
         } else if (figureType == "Tetrahedron") {
             figure = createTetrahedron();
-        } else {
+        } else if (figureType == "Icosahedron"){
+            figure = createIcosahedron();
+        } else if (figureType == "Octahedron"){
+            figure = createOctahedron();
+        }
+        else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
             // Point
@@ -184,91 +189,6 @@ Figure Lsystem::createCube() {
     Figure figure;
     // Punten
     Vector3D point1;
-    point1.z = 1;
-    point1.y = -1;
-    point1.x = -1;
-    figure.points.push_back(point1);
-    Vector3D point2;
-    point2.z = -1;
-    point2.y = 1;
-    point2.x = -1;
-    figure.points.push_back(point2);
-    Vector3D point3;
-    point3.z = 1;
-    point3.y = 1;
-    point3.x = 1;
-    figure.points.push_back(point3);
-    Vector3D point4;
-    point4.z = -1;
-    point4.y = -1;
-    point4.x = 1;
-    figure.points.push_back(point4);
-    Vector3D point5;
-    point5.z = 1;
-    point5.y = 1;
-    point5.x = -1;
-    figure.points.push_back(point5);
-    Vector3D point6;
-    point6.z = -1;
-    point6.y = -1;
-    point6.x = -1;
-    figure.points.push_back(point6);
-    Vector3D point7;
-    point7.z = 1;
-    point7.y = -1;
-    point7.x = 1;
-    figure.points.push_back(point7);
-    Vector3D point8;
-    point8.z = -1;
-    point8.y = 1;
-    point8.x = 1;
-    figure.points.push_back(point8);
-    // Faces
-    Face face1;
-    face1.point_indexes.push_back(1);
-    face1.point_indexes.push_back(5);
-    face1.point_indexes.push_back(3);
-    face1.point_indexes.push_back(7);
-    figure.faces.push_back(face1);
-    Face face2;
-    face2.point_indexes.push_back(5);
-    face2.point_indexes.push_back(2);
-    face2.point_indexes.push_back(8);
-    face2.point_indexes.push_back(3);
-    figure.faces.push_back(face2);
-    Face face3;
-    face3.point_indexes.push_back(2);
-    face3.point_indexes.push_back(6);
-    face3.point_indexes.push_back(4);
-    face3.point_indexes.push_back(8);
-    figure.faces.push_back(face3);
-    Face face4;
-    face4.point_indexes.push_back(6);
-    face4.point_indexes.push_back(1);
-    face4.point_indexes.push_back(7);
-    face4.point_indexes.push_back(4);
-    figure.faces.push_back(face4);
-    Face face5;
-    face5.point_indexes.push_back(7);
-    face5.point_indexes.push_back(3);
-    face5.point_indexes.push_back(8);
-    face5.point_indexes.push_back(4);
-    figure.faces.push_back(face5);
-    Face face6;
-    face6.point_indexes.push_back(1);
-    face6.point_indexes.push_back(6);
-    face6.point_indexes.push_back(2);
-    face6.point_indexes.push_back(5);
-    figure.faces.push_back(face6);
-
-    return figure;
-}
-
-Figure Lsystem::createTetrahedron() {
-    // Maak een figuur aan
-    Figure figure;
-    // Punten
-    Vector3D point1;
     point1.x = 1;
     point1.y = -1;
     point1.z = -1;
@@ -288,27 +208,81 @@ Figure Lsystem::createTetrahedron() {
     point4.y = -1;
     point4.z = 1;
     figure.points.push_back(point4);
+    Vector3D point5;
+    point5.x = 1;
+    point5.y = 1;
+    point5.z = -1;
+    figure.points.push_back(point5);
+    Vector3D point6;
+    point6.x = -1;
+    point6.y = -1;
+    point6.z = -1;
+    figure.points.push_back(point6);
+    Vector3D point7;
+    point7.x = 1;
+    point7.y = -1;
+    point7.z = 1;
+    figure.points.push_back(point7);
+    Vector3D point8;
+    point8.x = -1;
+    point8.y = 1;
+    point8.z = 1;
+    figure.points.push_back(point8);
     // Faces
     Face face1;
     face1.point_indexes.push_back(1);
-    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(5);
     face1.point_indexes.push_back(3);
+    face1.point_indexes.push_back(7);
+    for (int i = 0; i < face1.point_indexes.size(); ++i) {
+        face1.point_indexes[i] -= 1;
+    }
     figure.faces.push_back(face1);
     Face face2;
+    face2.point_indexes.push_back(5);
     face2.point_indexes.push_back(2);
-    face2.point_indexes.push_back(4);
+    face2.point_indexes.push_back(8);
     face2.point_indexes.push_back(3);
+    for (int i = 0; i < face2.point_indexes.size(); ++i) {
+        face2.point_indexes[i] -= 1;
+    }
     figure.faces.push_back(face2);
     Face face3;
-    face3.point_indexes.push_back(1);
-    face3.point_indexes.push_back(4);
     face3.point_indexes.push_back(2);
+    face3.point_indexes.push_back(6);
+    face3.point_indexes.push_back(4);
+    face3.point_indexes.push_back(8);
+    for (int i = 0; i < face3.point_indexes.size(); ++i) {
+        face3.point_indexes[i] -= 1;
+    }
     figure.faces.push_back(face3);
     Face face4;
+    face4.point_indexes.push_back(6);
     face4.point_indexes.push_back(1);
-    face4.point_indexes.push_back(3);
+    face4.point_indexes.push_back(7);
     face4.point_indexes.push_back(4);
+    for (int i = 0; i < face4.point_indexes.size(); ++i) {
+        face4.point_indexes[i] -= 1;
+    }
     figure.faces.push_back(face4);
+    Face face5;
+    face5.point_indexes.push_back(7);
+    face5.point_indexes.push_back(3);
+    face5.point_indexes.push_back(8);
+    face5.point_indexes.push_back(4);
+    for (int i = 0; i < face5.point_indexes.size(); ++i) {
+        face5.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face5);
+    Face face6;
+    face6.point_indexes.push_back(1);
+    face6.point_indexes.push_back(6);
+    face6.point_indexes.push_back(2);
+    face6.point_indexes.push_back(5);
+    for (int i = 0; i < face6.point_indexes.size(); ++i) {
+        face6.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face6);
 
     return figure;
 }
@@ -342,6 +316,363 @@ Figure Lsystem::createLSystem() {
     face2.point_indexes.push_back(1);
     face2.point_indexes.push_back(3);
     figure.faces.push_back(face2);
+
+    return figure;
+}
+
+Figure Lsystem::createTetrahedron() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D point1;
+    point1.x = 1;
+    point1.y = -1;
+    point1.z = -1;
+    figure.points.push_back(point1);
+    Vector3D point2;
+    point2.x = -1;
+    point2.y = 1;
+    point2.z = -1;
+    figure.points.push_back(point2);
+    Vector3D point3;
+    point3.x = 1;
+    point3.y = 1;
+    point3.z = 1;
+    figure.points.push_back(point3);
+    Vector3D point4;
+    point4.x = -1;
+    point4.y = -1;
+    point4.z = 1;
+    figure.points.push_back(point4);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(3);
+    for (int i = 0; i < face1.point_indexes.size(); ++i) {
+        face1.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(2);
+    face2.point_indexes.push_back(4);
+    face2.point_indexes.push_back(3);
+    for (int i = 0; i < face2.point_indexes.size(); ++i) {
+        face2.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face2);
+    Face face3;
+    face3.point_indexes.push_back(1);
+    face3.point_indexes.push_back(4);
+    face3.point_indexes.push_back(2);
+    for (int i = 0; i < face3.point_indexes.size(); ++i) {
+        face3.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face3);
+    Face face4;
+    face4.point_indexes.push_back(1);
+    face4.point_indexes.push_back(3);
+    face4.point_indexes.push_back(4);
+    for (int i = 0; i < face4.point_indexes.size(); ++i) {
+        face4.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face4);
+
+    return figure;
+}
+
+Figure Lsystem::createIcosahedron() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D point1;
+    point1.x = 0;
+    point1.y = 0;
+    point1.z = sqrt(5)/2;
+    figure.points.push_back(point1);
+    for (int i = 2; i < 7; ++i) {
+        Vector3D point;
+        point.x = cos((i-2)*2*M_PI/5);
+        point.y = sin((i-2)*2*M_PI/5);
+        point.z = 0.5;
+        figure.points.push_back(point);
+    }
+    for (int i = 7; i < 12; ++i) {
+        Vector3D point;
+        point.x = cos(M_PI/5+(i-7)*2*M_PI/5);
+        point.y = sin(M_PI/5+(i-7)*2*M_PI/5);
+        point.z = -0.5;
+        figure.points.push_back(point);
+    }
+    Vector3D point12;
+    point12.x = 0;
+    point12.y = 0;
+    point12.z = -sqrt(5)/2;
+    figure.points.push_back(point12);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(3);
+    for (int i = 0; i < face1.point_indexes.size(); ++i) {
+        face1.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(1);
+    face2.point_indexes.push_back(3);
+    face2.point_indexes.push_back(4);
+    for (int i = 0; i < face2.point_indexes.size(); ++i) {
+        face2.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face2);
+    Face face3;
+    face3.point_indexes.push_back(1);
+    face3.point_indexes.push_back(4);
+    face3.point_indexes.push_back(5);
+    for (int i = 0; i < face3.point_indexes.size(); ++i) {
+        face3.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face3);
+    Face face4;
+    face4.point_indexes.push_back(1);
+    face4.point_indexes.push_back(5);
+    face4.point_indexes.push_back(6);
+    for (int i = 0; i < face4.point_indexes.size(); ++i) {
+        face4.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face4);
+    Face face5;
+    face5.point_indexes.push_back(1);
+    face5.point_indexes.push_back(6);
+    face5.point_indexes.push_back(2);
+    for (int i = 0; i < face5.point_indexes.size(); ++i) {
+        face5.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face5);
+    Face face6;
+    face6.point_indexes.push_back(2);
+    face6.point_indexes.push_back(7);
+    face6.point_indexes.push_back(3);
+    for (int i = 0; i < face6.point_indexes.size(); ++i) {
+        face6.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face6);
+    Face face7;
+    face7.point_indexes.push_back(3);
+    face7.point_indexes.push_back(7);
+    face7.point_indexes.push_back(8);
+    for (int i = 0; i < face7.point_indexes.size(); ++i) {
+        face7.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face7);
+    Face face8;
+    face8.point_indexes.push_back(3);
+    face8.point_indexes.push_back(8);
+    face8.point_indexes.push_back(4);
+    for (int i = 0; i < face8.point_indexes.size(); ++i) {
+        face8.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face8);
+    Face face9;
+    face9.point_indexes.push_back(4);
+    face9.point_indexes.push_back(8);
+    face9.point_indexes.push_back(9);
+    for (int i = 0; i < face9.point_indexes.size(); ++i) {
+        face9.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face9);
+    Face face10;
+    face10.point_indexes.push_back(4);
+    face10.point_indexes.push_back(9);
+    face10.point_indexes.push_back(5);
+    for (int i = 0; i < face10.point_indexes.size(); ++i) {
+        face10.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face10);
+    Face face11;
+    face11.point_indexes.push_back(5);
+    face11.point_indexes.push_back(9);
+    face11.point_indexes.push_back(10);
+    for (int i = 0; i < face11.point_indexes.size(); ++i) {
+        face11.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face11);
+    Face face12;
+    face12.point_indexes.push_back(5);
+    face12.point_indexes.push_back(10);
+    face12.point_indexes.push_back(6);
+    for (int i = 0; i < face12.point_indexes.size(); ++i) {
+        face12.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face12);
+    Face face13;
+    face13.point_indexes.push_back(6);
+    face13.point_indexes.push_back(10);
+    face13.point_indexes.push_back(11);
+    for (int i = 0; i < face13.point_indexes.size(); ++i) {
+        face13.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face13);
+    Face face14;
+    face14.point_indexes.push_back(6);
+    face14.point_indexes.push_back(11);
+    face14.point_indexes.push_back(2);
+    for (int i = 0; i < face14.point_indexes.size(); ++i) {
+        face14.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face14);
+    Face face15;
+    face15.point_indexes.push_back(2);
+    face15.point_indexes.push_back(11);
+    face15.point_indexes.push_back(7);
+    for (int i = 0; i < face15.point_indexes.size(); ++i) {
+        face15.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face15);
+    Face face16;
+    face16.point_indexes.push_back(12);
+    face16.point_indexes.push_back(8);
+    face16.point_indexes.push_back(7);
+    for (int i = 0; i < face16.point_indexes.size(); ++i) {
+        face16.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face16);
+    Face face17;
+    face17.point_indexes.push_back(12);
+    face17.point_indexes.push_back(9);
+    face17.point_indexes.push_back(8);
+    for (int i = 0; i < face17.point_indexes.size(); ++i) {
+        face17.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face17);
+    Face face18;
+    face18.point_indexes.push_back(12);
+    face18.point_indexes.push_back(10);
+    face18.point_indexes.push_back(9);
+    for (int i = 0; i < face18.point_indexes.size(); ++i) {
+        face18.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face18);
+    Face face19;
+    face19.point_indexes.push_back(12);
+    face19.point_indexes.push_back(11);
+    face19.point_indexes.push_back(10);
+    for (int i = 0; i < face19.point_indexes.size(); ++i) {
+        face19.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face19);
+    Face face20;
+    face20.point_indexes.push_back(12);
+    face20.point_indexes.push_back(7);
+    face20.point_indexes.push_back(11);
+    for (int i = 0; i < face20.point_indexes.size(); ++i) {
+        face20.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face20);
+
+    return figure;
+}
+
+Figure Lsystem::createOctahedron() {
+    // Maak een figuur aan
+    Figure figure;
+    // Punten
+    Vector3D point1;
+    point1.x = 1;
+    point1.y = 0;
+    point1.z = 0;
+    figure.points.push_back(point1);
+    Vector3D point2;
+    point2.x = 0;
+    point2.y = 1;
+    point2.z = 0;
+    figure.points.push_back(point2);
+    Vector3D point3;
+    point3.x = -1;
+    point3.y = 0;
+    point3.z = 0;
+    figure.points.push_back(point3);
+    Vector3D point4;
+    point4.x = 0;
+    point4.y = -1;
+    point4.z = 0;
+    figure.points.push_back(point4);
+    Vector3D point5;
+    point5.x = 0;
+    point5.y = 0;
+    point5.z = -1;
+    figure.points.push_back(point5);
+    Vector3D point6;
+    point6.x = 0;
+    point6.y = 0;
+    point6.z = 1;
+    figure.points.push_back(point6);
+    // Faces
+    Face face1;
+    face1.point_indexes.push_back(1);
+    face1.point_indexes.push_back(2);
+    face1.point_indexes.push_back(6);
+    for (int i = 0; i < face1.point_indexes.size(); ++i) {
+        face1.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face1);
+    Face face2;
+    face2.point_indexes.push_back(2);
+    face2.point_indexes.push_back(3);
+    face2.point_indexes.push_back(6);
+    for (int i = 0; i < face2.point_indexes.size(); ++i) {
+        face2.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face2);
+    Face face3;
+    face3.point_indexes.push_back(3);
+    face3.point_indexes.push_back(4);
+    face3.point_indexes.push_back(6);
+    for (int i = 0; i < face3.point_indexes.size(); ++i) {
+        face3.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face3);
+    Face face4;
+    face4.point_indexes.push_back(4);
+    face4.point_indexes.push_back(1);
+    face4.point_indexes.push_back(6);
+    for (int i = 0; i < face4.point_indexes.size(); ++i) {
+        face4.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face4);
+    Face face5;
+    face5.point_indexes.push_back(2);
+    face5.point_indexes.push_back(1);
+    face5.point_indexes.push_back(5);
+    for (int i = 0; i < face5.point_indexes.size(); ++i) {
+        face5.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face5);
+    Face face6;
+    face6.point_indexes.push_back(3);
+    face6.point_indexes.push_back(2);
+    face6.point_indexes.push_back(5);
+    for (int i = 0; i < face6.point_indexes.size(); ++i) {
+        face6.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face6);
+    Face face7;
+    face7.point_indexes.push_back(4);
+    face7.point_indexes.push_back(3);
+    face7.point_indexes.push_back(5);
+    for (int i = 0; i < face7.point_indexes.size(); ++i) {
+        face7.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face7);
+    Face face8;
+    face8.point_indexes.push_back(1);
+    face8.point_indexes.push_back(4);
+    face8.point_indexes.push_back(5);
+    for (int i = 0; i < face8.point_indexes.size(); ++i) {
+        face8.point_indexes[i] -= 1;
+    }
+    figure.faces.push_back(face8);
 
     return figure;
 }

@@ -22,8 +22,10 @@ public:
     Lines2D doProjection(const Figures3D &figures);
     Point2D generatePoint2D(const Vector3D &point,const double d);
     Figure createCube();
-    Figure createTetrahedron();
     Figure createLSystem();
+    Figure createTetrahedron();
+    Figure createIcosahedron();
+    Figure createOctahedron();
 };
 
 
