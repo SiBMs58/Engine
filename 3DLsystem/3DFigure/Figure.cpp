@@ -34,7 +34,7 @@ Matrix Figure::rotateY(double angle){
     rotateYMatrix(1,1) = cos(angle);
     rotateYMatrix(1,3) = -sin(angle);
     rotateYMatrix(2,2) = 1;
-    rotateYMatrix(1,3) = sin(angle);
+    rotateYMatrix(3,1) = sin(angle);
     rotateYMatrix(3,3) = cos(angle);
     rotateYMatrix(4,4) = 1;
     return rotateYMatrix;
