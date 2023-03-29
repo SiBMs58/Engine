@@ -34,7 +34,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             figure = createCylinder(n, height);
         } else if (figureType == "Sphere"){
             int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
-            figure = createSphere( ,n)
+            figure = createSphere(1 ,n);
         }
         else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
@@ -858,6 +858,97 @@ Figure Lsystem::createCylinder(const int n, const double h) {
 }
 
 Figure Lsystem::createSphere(const double radius, const int n) {
+    // Maak een figuur aan
+    Figure figure;
+    // 1. Genereer een icosahedron
+    Figure icosahedron = createIcosahedron();
+    // 2. Deel elke driehoek op in kleinere driehoeke
+    int counter = 0;
+    // 3. Herhaal stap 2 in totaal ‘n’ keer TODO: Fix stap 3 herhaal zo veel keer
+    if (n == 0) {
+        figure = createIcosahedron();
+    } else {
+        while (counter < n) {
+            for (int j = 0; j < icosahedron.faces.size(); ++j) {
+                vector<int> pointIndexes = icosahedron.faces[j].point_indexes;
+                // Punten
+                Vector3D pointA;
+                pointA.x = icosahedron.points[pointIndexes[0]].x;
+                pointA.y = icosahedron.points[pointIndexes[0]].y;
+                pointA.z = icosahedron.points[pointIndexes[0]].z;
+                figure.points.push_back(pointA);
+                Vector3D pointB;
+                pointB.x = icosahedron.points[pointIndexes[1]].x;
+                pointB.y = icosahedron.points[pointIndexes[1]].y;
+                pointB.z = icosahedron.points[pointIndexes[1]].z;
+                figure.points.push_back(pointB);
+                Vector3D pointC;
+                pointC.x = icosahedron.points[pointIndexes[2]].x;
+                pointC.y = icosahedron.points[pointIndexes[2]].y;
+                pointC.z = icosahedron.points[pointIndexes[2]].z;
+                figure.points.push_back(pointC);
+                Vector3D pointD;
+                pointD.x = (pointA.x+pointB.x)/2;
+                pointD.y = (pointA.y+pointB.y)/2;
+                pointD.z = (pointA.z+pointB.z)/2;
+                figure.points.push_back(pointD);
+                Vector3D pointE;
+                pointE.x = (pointA.x+pointC.x)/2;
+                pointE.y = (pointA.y+pointC.y)/2;
+                pointE.z = (pointA.z+pointC.z)/2;
+                figure.points.push_back(pointE);
+                Vector3D pointF;
+                pointF.x = (pointB.x+pointC.x)/2;
+                pointF.y = (pointB.y+pointC.y)/2;
+                pointF.z = (pointB.z+pointC.z)/2;
+                figure.points.push_back(pointF);
+                // Faces
+                Face face1; // ADE
+                face1.point_indexes.push_back(figure.points.size()+1-6);
+                face1.point_indexes.push_back(figure.points.size()+4-6);
+                face1.point_indexes.push_back(figure.points.size()+5-6);
+                for (int i = 0; i < face1.point_indexes.size(); ++i) {
+                    face1.point_indexes[i] -= 1;
+                }
+                figure.faces.push_back(face1);
+                Face face2; // BFD
+                face2.point_indexes.push_back(figure.points.size()+2-6);
+                face2.point_indexes.push_back(figure.points.size()+6-6);
+                face2.point_indexes.push_back(figure.points.size()+4-6);
+                for (int i = 0; i < face2.point_indexes.size(); ++i) {
+                    face2.point_indexes[i] -= 1;
+                }
+                figure.faces.push_back(face2);
+                Face face3; // CEF
+                face3.point_indexes.push_back(figure.points.size()+3-6);
+                face3.point_indexes.push_back(figure.points.size()+5-6);
+                face3.point_indexes.push_back(figure.points.size()+6-6);
+                for (int i = 0; i < face3.point_indexes.size(); ++i) {
+                    face3.point_indexes[i] -= 1;
+                }
+                figure.faces.push_back(face3);
+                Face face4; // DFE
+                face4.point_indexes.push_back(figure.points.size()+4-6);
+                face4.point_indexes.push_back(figure.points.size()+6-6);
+                face4.point_indexes.push_back(figure.points.size()+5-6);
+                for (int i = 0; i < face4.point_indexes.size(); ++i) {
+                    face4.point_indexes[i] -= 1;
+                }
+                figure.faces.push_back(face4);
+
+            }
+            counter++;
+        }
+    }
+    // 4. Herschaal alle punten
+    for (int i = 0; i < figure.points.size(); ++i) {
+        double r = sqrt(pow(figure.points[i].x,2)+pow(figure.points[i].y,2)+pow(figure.points[i].z,2));
+        figure.points[i].x = figure.points[i].x/r;
+        figure.points[i].y = figure.points[i].y/r;
+        figure.points[i].z = figure.points[i].z/r;
+    }
+
+    return figure;
 
 }
 
