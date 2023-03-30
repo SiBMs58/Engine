@@ -9,6 +9,7 @@
 #include "3DFigure/Figure.h"
 #include "../ini_configuration.h"
 #include "../2DLsystem/2DLine/Line2D.h"
+#include "../l_parser.h"
 
 using Lines2D = vector<Line2D>;
 
@@ -30,7 +31,9 @@ public:
     Figure createCylinder(const int n, const double h);
     Figure createSphere(const double radius, const int n);
 
-    Figure createLSystem();
+    Lines2D drawLSystem(const LParser::LSystem3D &l_system, const vector<double> &lineColor);
+protected:
+    Vector3D huidigeRichting;
 };
 
 
