@@ -31,6 +31,7 @@ public:
     Figure createCone(const int n, const double h);
     Figure createCylinder(const int n, const double h);
     Figure createSphere(const double radius, const int n);
+    Figure createTorus(const double r,const double R, const int n, const int m);
 
     Figure drawLSystem(const LParser::LSystem3D &l_system);
 

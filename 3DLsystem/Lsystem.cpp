@@ -45,6 +45,12 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         } else if (figureType == "Sphere"){
             int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
             figure = createSphere(1 ,n);
+        } else if (figureType == "Torus"){
+            int r = configuration["Figure"+to_string(i)]["r"].as_int_or_die();
+            int R = configuration["Figure"+to_string(i)]["R"].as_int_or_die();
+            int m = configuration["Figure"+to_string(i)]["m"].as_int_or_die();
+            int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
+            figure = createTorus(r, R, n ,m);
         }
         else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
@@ -770,7 +776,6 @@ Figure Lsystem::createCylinder(const int n, const double h) {
 }
 
 Figure Lsystem::createSphere(const double radius, const int n) {
-    // TODO
     // Maak een figuur aan
     Figure figure;
     // 1. Genereer een icosahedron
@@ -836,6 +841,42 @@ Figure Lsystem::createSphere(const double radius, const int n) {
 
     return figure;
 
+}
+
+Figure Lsystem::createTorus(const double r, const double R, const int n, const int m) {
+    // Maak een figuur aan
+    Figure figure;
+    for (unsigned int i = 0; i < n+1; ++i) {
+        for (unsigned int j = 0; j < m+1; ++j) {
+            double u = (2*i*M_PI)/n;
+            double v = (2*j*M_PI)/m;
+            double Xuv = (R+r*cos(v))*cos(u);
+            double Yuv = (R+r*cos(v))*sin(u);
+            double Zuv = r*sin(v);
+            // Punten
+            Vector3D point = Vector3D::point(Xuv,Yuv,Zuv);
+            figure.points.push_back(point);
+            // Faces
+            if (i >= 1 and i <= 36){
+                Face face;
+                face.point_indexes.push_back(figure.points.size()-m-2);
+                face.point_indexes.push_back(figure.points.size()-1);
+                face.point_indexes.push_back(figure.points.size());
+                face.point_indexes.push_back(figure.points.size()-m-1);
+                figure.faces.push_back(face);
+            }
+        }
+    }
+    /*for (unsigned int i = m; i >= 1; --i) {
+        // Faces
+        Face face;
+        face.point_indexes.push_back(figure.points.size()-i+1);
+        face.point_indexes.push_back(figure.points.size()%i);
+        face.point_indexes.push_back(figure.points.size()%i+1);
+        face.point_indexes.push_back(figure.points.size()-i+2);
+        figure.faces.push_back(face);
+    }*/
+    return figure;
 }
 
 string getReplacementRule(const LParser::LSystem3D &Lsystem) {
