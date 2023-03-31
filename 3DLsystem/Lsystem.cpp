@@ -779,62 +779,51 @@ Figure Lsystem::createSphere(const double radius, const int n) {
     int counter = 0;
     // 3. Herhaal stap 2 in totaal ‘n’ keer
     while (counter < n) {
-        for (int j = 0; j < figure.faces.size(); ++j) {
+        Figure bol;
+        for (unsigned int j = 0; j < figure.faces.size(); ++j) {
             vector<int> pointIndexes = figure.faces[j].point_indexes;
             // Punten
             Vector3D pointA;
             pointA = figure.points[pointIndexes[0]];
-            figure.points.push_back(pointA);
+            bol.points.push_back(pointA);
             Vector3D pointB;
             pointB = figure.points[pointIndexes[1]];
-            figure.points.push_back(pointB);
+            bol.points.push_back(pointB);
             Vector3D pointC;
             pointC = figure.points[pointIndexes[2]];
-            figure.points.push_back(pointC);
+            bol.points.push_back(pointC);
             Vector3D pointD;
             pointD = (pointA+pointB)/2;
-            figure.points.push_back(pointD);
+            bol.points.push_back(pointD);
             Vector3D pointE;
             pointE = (pointA+pointC)/2;
-            figure.points.push_back(pointE);
+            bol.points.push_back(pointE);
             Vector3D pointF;
             pointF = (pointB+pointC)/2;
-            figure.points.push_back(pointF);
+            bol.points.push_back(pointF);
             // Faces
             Face face1; // ADE
-            face1.point_indexes.push_back(figure.faces.size()+1);
-            face1.point_indexes.push_back(figure.faces.size()+4);
-            face1.point_indexes.push_back(figure.faces.size()+5);
-            for (int i = 0; i < face1.point_indexes.size(); ++i) {
-                face1.point_indexes[i] -= 1;
-            }
-            figure.faces.push_back(face1);
+            face1.point_indexes.push_back(bol.points.size()-6);
+            face1.point_indexes.push_back(bol.points.size()-3);
+            face1.point_indexes.push_back(bol.points.size()-2);
+            bol.faces.push_back(face1);
             Face face2; // BFD
-            face2.point_indexes.push_back(2+figure.points.size());
-            face2.point_indexes.push_back(6+figure.points.size());
-            face2.point_indexes.push_back(4+figure.points.size());
-            for (int i = 0; i < face2.point_indexes.size(); ++i) {
-                face2.point_indexes[i] -= 1;
-            }
-            figure.faces.push_back(face2);
+            face2.point_indexes.push_back(bol.points.size()-5);
+            face2.point_indexes.push_back(bol.points.size()-1);
+            face2.point_indexes.push_back(bol.points.size()-3);
+            bol.faces.push_back(face2);
             Face face3; // CEF
-            face3.point_indexes.push_back(3+figure.points.size());
-            face3.point_indexes.push_back(5+figure.points.size());
-            face3.point_indexes.push_back(6+figure.points.size());
-            for (int i = 0; i < face3.point_indexes.size(); ++i) {
-                face3.point_indexes[i] -= 1;
-            }
-            figure.faces.push_back(face3);
+            face3.point_indexes.push_back(bol.points.size()-4);
+            face3.point_indexes.push_back(bol.points.size()-2);
+            face3.point_indexes.push_back(bol.points.size()-1);
+            bol.faces.push_back(face3);
             Face face4; // DFE
-            face4.point_indexes.push_back(4+figure.points.size());
-            face4.point_indexes.push_back(6+figure.points.size());
-            face4.point_indexes.push_back(5+figure.points.size());
-            for (int i = 0; i < face4.point_indexes.size(); ++i) {
-                face4.point_indexes[i] -= 1;
-            }
-            figure.faces.push_back(face4);
-
+            face4.point_indexes.push_back(bol.points.size()-3);
+            face4.point_indexes.push_back(bol.points.size()-1);
+            face4.point_indexes.push_back(bol.points.size()-2);
+            bol.faces.push_back(face4);
         }
+        figure = bol;
         counter++;
     }
     // 4. Herschaal alle punten
