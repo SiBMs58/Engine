@@ -988,25 +988,13 @@ Figure Lsystem::drawLSystem(const LParser::LSystem3D &l_system) {
     string replacementRule = getReplacementRule(l_system);
     // 1. We starten in een willekeurige positie, typisch positie (x, y, z) = (0, 0, 0) en in de richting ↵ = ↵0 radialen.
     Vector3D startingPoint = Vector3D::point(0,0,0);
-    startingPoint.x = 0;
-    startingPoint.y = 0;
-    startingPoint.z = 0;
     Vector3D currentPosition = startingPoint;
     vector<Vector3D> startingAngle;
-    Vector3D H;
-    H.x = 1;
-    H.y = 0;
-    H.z = 0;
+    Vector3D H = Vector3D::point(1,0,0);
     startingAngle.push_back(H);
-    Vector3D L;
-    L.x = 0;
-    L.y = 1;
-    L.z = 0;
+    Vector3D L = Vector3D::point(0,1,0);
     startingAngle.push_back(L);
-    Vector3D U;
-    U.x = 0;
-    U.y = 0;
-    U.z = 1;
+    Vector3D U = Vector3D::point(0,0,1);
     startingAngle.push_back(U);
     vector<Vector3D> currentAngle = startingAngle;
     // 2. We overlopen de string S = s1s2 . . . sk van links naar rechts en voeren afhankelijk van het huidige symbool si volgende actie uit:
@@ -1018,7 +1006,7 @@ Figure Lsystem::drawLSystem(const LParser::LSystem3D &l_system) {
             // Hnew = H cos(angle) + L sin(angle)
             currentAngle[0] = H*cos(angle) + L*sin(angle);
             // Lnew = - H sin(angle) - L cos(angle)
-            currentAngle[1] = -H*sin(angle) - L*cos(angle);
+            currentAngle[1] = -H*sin(angle) + L*cos(angle);
             // Unew = U
         }
         // Si = -
@@ -1028,7 +1016,7 @@ Figure Lsystem::drawLSystem(const LParser::LSystem3D &l_system) {
             // Hnew = H cos(-angle) + L sin(-angle)
             currentAngle[0] = H*cos(-angle) + L*sin(-angle);
             // Lnew = - H sin(-angle) - L cos(angle)
-            currentAngle[1] = -H*sin(-angle) - L*cos(-angle);
+            currentAngle[1] = -H*sin(-angle) + L*cos(-angle);
             // Unew = U
         }
         // Si = (
@@ -1100,7 +1088,6 @@ Figure Lsystem::drawLSystem(const LParser::LSystem3D &l_system) {
                 figure.points.push_back(currentPosition);
                 point = currentPosition+currentAngle[0];
                 figure.points.push_back(point);
-                cout << point.x << ", " << point.y << ", " << point.z << endl;
                 Face face;
                 face.point_indexes.push_back(figure.points.size()-1);
                 face.point_indexes.push_back(figure.points.size()-2);

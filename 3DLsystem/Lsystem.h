@@ -35,7 +35,6 @@ public:
     Figure drawLSystem(const LParser::LSystem3D &l_system);
 
 private:
-    Vector3D huidigeRichting;
     stack<Vector3D> positionStack;
     stack<vector<Vector3D>> angleStack;
 };
