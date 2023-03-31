@@ -51,12 +51,9 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
             // Point
             for (int k = 0; k < nrPoints; ++k) {
-                // Maak een punt aan
-                Vector3D points;
                 vector<double> vectorPoints = configuration["Figure"+to_string(i)]["point" + to_string(k)].as_double_tuple_or_die();
-                points.x = vectorPoints[0];
-                points.y = vectorPoints[1];
-                points.z = vectorPoints[2];
+                // Maak een punt aan
+                Vector3D points = Vector3D::point(vectorPoints[0], vectorPoints[1], vectorPoints[2]);
                 figure.points.push_back(points);
             }
             // Face
@@ -91,10 +88,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         Matrix rotateZMatrix = figure.rotateZ(rotateZ);
         // Translatie over vector
         vector<double> vectorCenter = configuration["Figure"+to_string(i)]["center"].as_double_tuple_or_die();
-        Vector3D translatieVector;
-        translatieVector.x = vectorCenter[0];
-        translatieVector.y = vectorCenter[1];
-        translatieVector.z = vectorCenter[2];
+        Vector3D translatieVector = Vector3D::point(vectorCenter[0], vectorCenter[1], vectorCenter[2]);
         Matrix translationMatrix = figure.translate(translatieVector);
 
         Matrix transformationMatrix = scaleMatrix*rotateXMatrix*rotateYMatrix*rotateZMatrix*translationMatrix;
@@ -109,10 +103,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         figures.push_back(figure);
     }
     vector<double> vectorEye = configuration["General"]["eye"].as_double_tuple_or_die();
-    Vector3D eyePoint;
-    eyePoint.x = vectorEye[0];
-    eyePoint.y = vectorEye[1];
-    eyePoint.z = vectorEye[2];
+    Vector3D eyePoint = Vector3D::point(vectorEye[0], vectorEye[1], vectorEye[2]);
     Matrix eyePointTransformationMatrix = eyePointTrans(eyePoint);
     applyTransformation(figures, eyePointTransformationMatrix);
     return figures;
@@ -167,14 +158,8 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
             for (int k = 0; k < figures[i].faces[j].point_indexes.size()-1; ++k) {
                 int point_index1 = figures[i].faces[j].point_indexes[k];
                 int point_index2 = figures[i].faces[j].point_indexes[k+1];
-                Vector3D vectorPoint1;
-                vectorPoint1.x = figures[i].points[point_index1].x;
-                vectorPoint1.y = figures[i].points[point_index1].y;
-                vectorPoint1.z = figures[i].points[point_index1].z;
-                Vector3D vectorPoint2;
-                vectorPoint2.x = figures[i].points[point_index2].x;
-                vectorPoint2.y = figures[i].points[point_index2].y;
-                vectorPoint2.z = figures[i].points[point_index2].z;
+                Vector3D vectorPoint1 = Vector3D::point(figures[i].points[point_index1].x, figures[i].points[point_index1].y, figures[i].points[point_index1].z);
+                Vector3D vectorPoint2 = Vector3D::point(figures[i].points[point_index2].x, figures[i].points[point_index2].y, figures[i].points[point_index2].z);
                 Point2D point1 = generatePoint2D(vectorPoint1, 1);
                 Point2D point2 = generatePoint2D(vectorPoint2, 1);
                 Line2D line = Line2D(point1, point2, figures[i].color);
@@ -183,14 +168,8 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
             // Add line from last point_index to first one
             int point_index1 = figures[i].faces[j].point_indexes[figures[i].faces[j].point_indexes.size()-1];
             int point_index2 = figures[i].faces[j].point_indexes[0];
-            Vector3D vectorPoint1;
-            vectorPoint1.x = figures[i].points[point_index1].x;
-            vectorPoint1.y = figures[i].points[point_index1].y;
-            vectorPoint1.z = figures[i].points[point_index1].z;
-            Vector3D vectorPoint2;
-            vectorPoint2.x = figures[i].points[point_index2].x;
-            vectorPoint2.y = figures[i].points[point_index2].y;
-            vectorPoint2.z = figures[i].points[point_index2].z;
+            Vector3D vectorPoint1 = Vector3D::point(figures[i].points[point_index1].x, figures[i].points[point_index1].y, figures[i].points[point_index1].z);
+            Vector3D vectorPoint2 = Vector3D::point(figures[i].points[point_index2].x, figures[i].points[point_index2].y, figures[i].points[point_index2].z);
             Point2D point1 = generatePoint2D(vectorPoint1, 1);
             Point2D point2 = generatePoint2D(vectorPoint2, 1);
             Line2D line = Line2D(point1, point2, figures[i].color);
@@ -211,45 +190,21 @@ Figure Lsystem::createCube() {
     // Maak een figuur aan
     Figure figure;
     // Punten
-    Vector3D point1;
-    point1.x = 1;
-    point1.y = -1;
-    point1.z = -1;
+    Vector3D point1 = Vector3D::point(1, -1, -1);
     figure.points.push_back(point1);
-    Vector3D point2;
-    point2.x = -1;
-    point2.y = 1;
-    point2.z = -1;
+    Vector3D point2 = Vector3D::point(-1, 1, -1);
     figure.points.push_back(point2);
-    Vector3D point3;
-    point3.x = 1;
-    point3.y = 1;
-    point3.z = 1;
+    Vector3D point3 = Vector3D::point(1, 1, 1);
     figure.points.push_back(point3);
-    Vector3D point4;
-    point4.x = -1;
-    point4.y = -1;
-    point4.z = 1;
+    Vector3D point4 = Vector3D::point(-1, -1, 1);
     figure.points.push_back(point4);
-    Vector3D point5;
-    point5.x = 1;
-    point5.y = 1;
-    point5.z = -1;
+    Vector3D point5 = Vector3D::point(1, 1, -1);
     figure.points.push_back(point5);
-    Vector3D point6;
-    point6.x = -1;
-    point6.y = -1;
-    point6.z = -1;
+    Vector3D point6 = Vector3D::point(-1, -1, -1);
     figure.points.push_back(point6);
-    Vector3D point7;
-    point7.x = 1;
-    point7.y = -1;
-    point7.z = 1;
+    Vector3D point7 = Vector3D::point(1, -1, 1);
     figure.points.push_back(point7);
-    Vector3D point8;
-    point8.x = -1;
-    point8.y = 1;
-    point8.z = 1;
+    Vector3D point8 = Vector3D::point(-1, 1, 1);
     figure.points.push_back(point8);
     // Faces
     Face face1;
@@ -314,25 +269,13 @@ Figure Lsystem::createTetrahedron() {
     // Maak een figuur aan
     Figure figure;
     // Punten
-    Vector3D point1;
-    point1.x = 1;
-    point1.y = -1;
-    point1.z = -1;
+    Vector3D point1 = Vector3D::point(1, -1, -1);
     figure.points.push_back(point1);
-    Vector3D point2;
-    point2.x = -1;
-    point2.y = 1;
-    point2.z = -1;
+    Vector3D point2 = Vector3D::point(-1, 1, -1);
     figure.points.push_back(point2);
-    Vector3D point3;
-    point3.x = 1;
-    point3.y = 1;
-    point3.z = 1;
+    Vector3D point3 = Vector3D::point(1, 1, 1);
     figure.points.push_back(point3);
-    Vector3D point4;
-    point4.x = -1;
-    point4.y = -1;
-    point4.z = 1;
+    Vector3D point4 = Vector3D::point(-1, -1, 1);
     figure.points.push_back(point4);
     // Faces
     Face face1;
@@ -375,29 +318,17 @@ Figure Lsystem::createIcosahedron() {
     // Maak een figuur aan
     Figure figure;
     // Punten
-    Vector3D point1;
-    point1.x = 0;
-    point1.y = 0;
-    point1.z = sqrt(5)/2;
+    Vector3D point1 = Vector3D::point(0, 0, sqrt(5)/2);
     figure.points.push_back(point1);
     for (int i = 2; i < 7; ++i) {
-        Vector3D point;
-        point.x = cos((i-2)*2*M_PI/5);
-        point.y = sin((i-2)*2*M_PI/5);
-        point.z = 0.5;
+        Vector3D point = Vector3D::point(cos((i-2)*2*M_PI/5), sin((i-2)*2*M_PI/5), 0.5);
         figure.points.push_back(point);
     }
     for (int i = 7; i < 12; ++i) {
-        Vector3D point;
-        point.x = cos(M_PI/5+(i-7)*2*M_PI/5);
-        point.y = sin(M_PI/5+(i-7)*2*M_PI/5);
-        point.z = -0.5;
+        Vector3D point = Vector3D::point(cos(M_PI/5+(i-7)*2*M_PI/5), sin(M_PI/5+(i-7)*2*M_PI/5), -0.5);
         figure.points.push_back(point);
     }
-    Vector3D point12;
-    point12.x = 0;
-    point12.y = 0;
-    point12.z = -sqrt(5)/2;
+    Vector3D point12 = Vector3D::point(0, 0, -sqrt(5)/2);
     figure.points.push_back(point12);
     // Faces
     Face face1;
@@ -568,35 +499,17 @@ Figure Lsystem::createOctahedron() {
     // Maak een figuur aan
     Figure figure;
     // Punten
-    Vector3D point1;
-    point1.x = 1;
-    point1.y = 0;
-    point1.z = 0;
+    Vector3D point1 = Vector3D::point(1,0,0);
     figure.points.push_back(point1);
-    Vector3D point2;
-    point2.x = 0;
-    point2.y = 1;
-    point2.z = 0;
+    Vector3D point2 = Vector3D::point(0,1,0);
     figure.points.push_back(point2);
-    Vector3D point3;
-    point3.x = -1;
-    point3.y = 0;
-    point3.z = 0;
+    Vector3D point3 = Vector3D::point(-1,0,0);
     figure.points.push_back(point3);
-    Vector3D point4;
-    point4.x = 0;
-    point4.y = -1;
-    point4.z = 0;
+    Vector3D point4 = Vector3D::point(0,-1,0);
     figure.points.push_back(point4);
-    Vector3D point5;
-    point5.x = 0;
-    point5.y = 0;
-    point5.z = -1;
+    Vector3D point5 = Vector3D::point(0,0,-1);
     figure.points.push_back(point5);
-    Vector3D point6;
-    point6.x = 0;
-    point6.y = 0;
-    point6.z = 1;
+    Vector3D point6 = Vector3D::point(0,0,1);
     figure.points.push_back(point6);
     // Faces
     Face face1;
@@ -673,11 +586,12 @@ Figure Lsystem::createDodecahedron() {
     Figure icosahedron = createIcosahedron();
     // Punten
     for (int i = 0; i < icosahedron.faces.size(); ++i) {
-        Vector3D point;
         vector<int> pointIndexes = icosahedron.faces[i].point_indexes;
-        point.x = (icosahedron.points[pointIndexes[0]].x+icosahedron.points[pointIndexes[1]].x+icosahedron.points[pointIndexes[2]].x)/pointIndexes.size();
-        point.y = (icosahedron.points[pointIndexes[0]].y+icosahedron.points[pointIndexes[1]].y+icosahedron.points[pointIndexes[2]].y)/pointIndexes.size();
-        point.z = (icosahedron.points[pointIndexes[0]].z+icosahedron.points[pointIndexes[1]].z+icosahedron.points[pointIndexes[2]].z)/pointIndexes.size();
+        Vector3D point = Vector3D::point(
+                (icosahedron.points[pointIndexes[0]].x+icosahedron.points[pointIndexes[1]].x+icosahedron.points[pointIndexes[2]].x)/pointIndexes.size(),
+                (icosahedron.points[pointIndexes[0]].y+icosahedron.points[pointIndexes[1]].y+icosahedron.points[pointIndexes[2]].y)/pointIndexes.size(),
+                (icosahedron.points[pointIndexes[0]].z+icosahedron.points[pointIndexes[1]].z+icosahedron.points[pointIndexes[2]].z)/pointIndexes.size()
+                );
         figure.points.push_back(point);
     }
     // Faces
@@ -809,16 +723,10 @@ Figure Lsystem::createCone(const int n, const double h) {
     // Maak een figuur aan
     Figure figure;
     // Punten
-    Vector3D pointN;
-    pointN.x = 0;
-    pointN.y = 0;
-    pointN.z = h;
+    Vector3D pointN = Vector3D::point(0,0,h);
     figure.points.push_back(pointN);
     for (int i = 0; i < n+1; ++i) {
-        Vector3D point;
-        point.x = cos((2*i*M_PI)/n);
-        point.y = sin((2*i*M_PI)/n);
-        point.z = 0;
+        Vector3D point = Vector3D::point(cos((2*i*M_PI)/n), sin((2*i*M_PI)/n), 0);
         figure.points.push_back(point);
     }
     // Faces
@@ -841,17 +749,11 @@ Figure Lsystem::createCylinder(const int n, const double h) {
     Figure figure;
     // Punten
     for (int i = 0; i < n+1; ++i) {
-        Vector3D pointBottom;
-        pointBottom.x = cos((2*i*M_PI)/n);
-        pointBottom.y = sin((2*i*M_PI)/n);
-        pointBottom.z = 0;
+        Vector3D pointBottom = Vector3D::point(cos((2*i*M_PI)/n), sin((2*i*M_PI)/n), 0);
         figure.points.push_back(pointBottom);
     }
     for (int i = 0; i < n+1; ++i) {
-        Vector3D pointTop;
-        pointTop.x = cos((2*i*M_PI)/n);
-        pointTop.y = sin((2*i*M_PI)/n);
-        pointTop.z = h;
+        Vector3D pointTop = Vector3D::point(cos((2*i*M_PI)/n), sin((2*i*M_PI)/n), h);
         figure.points.push_back(pointTop);
     }
     // Faces
