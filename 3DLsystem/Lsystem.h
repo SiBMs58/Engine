@@ -10,6 +10,7 @@
 #include "../ini_configuration.h"
 #include "../2DLsystem/2DLine/Line2D.h"
 #include "../l_parser.h"
+#include <stack>
 
 using Lines2D = vector<Line2D>;
 
@@ -31,9 +32,12 @@ public:
     Figure createCylinder(const int n, const double h);
     Figure createSphere(const double radius, const int n);
 
-    Lines2D drawLSystem(const LParser::LSystem3D &l_system, const vector<double> &lineColor);
-protected:
+    Figure drawLSystem(const LParser::LSystem3D &l_system);
+
+private:
     Vector3D huidigeRichting;
+    stack<Vector3D> positionStack;
+    stack<vector<Vector3D>> angleStack;
 };
 
 

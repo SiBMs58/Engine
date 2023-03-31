@@ -2,6 +2,7 @@
 // Created by Siebe Mees on 17/03/2023.
 //
 
+#include <fstream>
 #include "Lsystem.h"
 
 vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration) {
@@ -14,7 +15,18 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         string figureType = configuration["Figure"+to_string(i)]["type"].as_string_or_die();
         if (figureType == "Cube"){
             figure = createCube();
-        } else if (figureType == "Tetrahedron") {
+        } else if (figureType == "3DLSystem"){
+            // Maak een parser aan
+            LParser::LSystem3D LParser3D;
+            // 3DLSystem
+            string inputFile = configuration["Figure" + to_string(i)]["inputfile"].as_string_or_die();
+            // Creëer if stream
+            ifstream file(inputFile);
+            // Steek in LParser
+            file >> LParser3D;
+            figure = drawLSystem(LParser3D);
+        }
+        else if (figureType == "Tetrahedron") {
             figure = createTetrahedron();
         } else if (figureType == "Icosahedron"){
             figure = createIcosahedron();
@@ -869,64 +881,52 @@ Figure Lsystem::createSphere(const double radius, const int n) {
             vector<int> pointIndexes = figure.faces[j].point_indexes;
             // Punten
             Vector3D pointA;
-            pointA.x = figure.points[pointIndexes[0]].x;
-            pointA.y = figure.points[pointIndexes[0]].y;
-            pointA.z = figure.points[pointIndexes[0]].z;
+            pointA = figure.points[pointIndexes[0]];
             figure.points.push_back(pointA);
             Vector3D pointB;
-            pointB.x = figure.points[pointIndexes[1]].x;
-            pointB.y = figure.points[pointIndexes[1]].y;
-            pointB.z = figure.points[pointIndexes[1]].z;
+            pointB = figure.points[pointIndexes[1]];
             figure.points.push_back(pointB);
             Vector3D pointC;
-            pointC.x = figure.points[pointIndexes[2]].x;
-            pointC.y = figure.points[pointIndexes[2]].y;
-            pointC.z = figure.points[pointIndexes[2]].z;
+            pointC = figure.points[pointIndexes[2]];
             figure.points.push_back(pointC);
             Vector3D pointD;
-            pointD.x = (pointA.x+pointB.x)/2;
-            pointD.y = (pointA.y+pointB.y)/2;
-            pointD.z = (pointA.z+pointB.z)/2;
+            pointD = (pointA+pointB)/2;
             figure.points.push_back(pointD);
             Vector3D pointE;
-            pointE.x = (pointA.x+pointC.x)/2;
-            pointE.y = (pointA.y+pointC.y)/2;
-            pointE.z = (pointA.z+pointC.z)/2;
+            pointE = (pointA+pointC)/2;
             figure.points.push_back(pointE);
             Vector3D pointF;
-            pointF.x = (pointB.x+pointC.x)/2;
-            pointF.y = (pointB.y+pointC.y)/2;
-            pointF.z = (pointB.z+pointC.z)/2;
+            pointF = (pointB+pointC)/2;
             figure.points.push_back(pointF);
             // Faces
             Face face1; // ADE
-            face1.point_indexes.push_back(1+figure.points.size());
-            face1.point_indexes.push_back(4+pow(20, counter));
-            face1.point_indexes.push_back(5+pow(20, counter)-1);
+            face1.point_indexes.push_back(figure.faces.size()+1);
+            face1.point_indexes.push_back(figure.faces.size()+4);
+            face1.point_indexes.push_back(figure.faces.size()+5);
             for (int i = 0; i < face1.point_indexes.size(); ++i) {
                 face1.point_indexes[i] -= 1;
             }
             figure.faces.push_back(face1);
             Face face2; // BFD
-            face2.point_indexes.push_back(2+pow(20, counter)-1);
-            face2.point_indexes.push_back(6+pow(20, counter)-1);
-            face2.point_indexes.push_back(4+pow(20, counter)-1);
+            face2.point_indexes.push_back(2+figure.points.size());
+            face2.point_indexes.push_back(6+figure.points.size());
+            face2.point_indexes.push_back(4+figure.points.size());
             for (int i = 0; i < face2.point_indexes.size(); ++i) {
                 face2.point_indexes[i] -= 1;
             }
             figure.faces.push_back(face2);
             Face face3; // CEF
-            face3.point_indexes.push_back(3+pow(20, counter)-1);
-            face3.point_indexes.push_back(5+pow(20, counter)-1);
-            face3.point_indexes.push_back(6+pow(20, counter)-1);
+            face3.point_indexes.push_back(3+figure.points.size());
+            face3.point_indexes.push_back(5+figure.points.size());
+            face3.point_indexes.push_back(6+figure.points.size());
             for (int i = 0; i < face3.point_indexes.size(); ++i) {
                 face3.point_indexes[i] -= 1;
             }
             figure.faces.push_back(face3);
             Face face4; // DFE
-            face4.point_indexes.push_back(4+pow(20, counter)-1);
-            face4.point_indexes.push_back(6+pow(20, counter)-1);
-            face4.point_indexes.push_back(5+pow(20, counter)-1);
+            face4.point_indexes.push_back(4+figure.points.size());
+            face4.point_indexes.push_back(6+figure.points.size());
+            face4.point_indexes.push_back(5+figure.points.size());
             for (int i = 0; i < face4.point_indexes.size(); ++i) {
                 face4.point_indexes[i] -= 1;
             }
@@ -956,7 +956,7 @@ string getReplacementRule(const LParser::LSystem3D &Lsystem) {
         for (unsigned int i = 0; i < nrIterations; ++i) {
             replacementRule ="";
             for (unsigned int i = 0; i < initiator.size(); ++i) {
-                if (initiator[i] == '-' || initiator[i] == '+' || initiator[i] == ')' || initiator[i] == '('){
+                if (initiator[i] == '-' || initiator[i] == '+' || initiator[i] == ')' || initiator[i] == '(' || initiator[i] == '^' || initiator[i] == '&' || initiator[i] == 92 || initiator[i] == '/' || initiator[i] == '|'){
                     replacementRule += initiator[i];
                 } else {
                     replacementRule += Lsystem.get_replacement(initiator[i]);
@@ -966,7 +966,7 @@ string getReplacementRule(const LParser::LSystem3D &Lsystem) {
         }
     } else {
         for (unsigned int i = 0; i < initiator.size(); ++i) {
-            if (initiator[i] == '-' || initiator[i] == '+' || initiator[i] == ')' || initiator[i] == '('){
+            if (initiator[i] == '-' || initiator[i] == '+' || initiator[i] == ')' || initiator[i] == '(' || initiator[i] == '^' || initiator[i] == '&' || initiator[i] == 92 || initiator[i] == '/' || initiator[i] == '|'){
                 replacementRule += initiator[i];
             } else {
                 replacementRule += Lsystem.get_replacement(initiator[i]);
@@ -976,65 +976,142 @@ string getReplacementRule(const LParser::LSystem3D &Lsystem) {
     return replacementRule;
 }
 
-Lines2D Lsystem::drawLSystem(const LParser::LSystem3D &l_system, const vector<double> &lineColor) {
-    // Maak lines2D aan
-    Lines2D lines;
-    double startingAngle = 0;
+Figure Lsystem::drawLSystem(const LParser::LSystem3D &l_system) {
+    // Maak een figuur aan
+    Figure figure;
     // Convert to radians
-    startingAngle = startingAngle*M_PI/180;
     set<char> alphabet = l_system.get_alphabet();
     double angle = l_system.get_angle();
     // Convert to radians
     angle = angle*M_PI/180;
     // Get total sting based on initiator
     string replacementRule = getReplacementRule(l_system);
-    // 1. We starten in een willekeurige positie, typisch positie (x, y) = (0, 0), en in de richting ↵ = ↵0 radialen.
-    Point2D startingPoint;
+    // 1. We starten in een willekeurige positie, typisch positie (x, y, z) = (0, 0, 0) en in de richting ↵ = ↵0 radialen.
+    Vector3D startingPoint = Vector3D::point(0,0,0);
     startingPoint.x = 0;
     startingPoint.y = 0;
-    double currentAngle = startingAngle;
-    // Make for a lineColor
-    Color color;
-    color.red = lineColor[0]*255;
-    color.green = lineColor[1]*255;
-    color.blue = lineColor[2]*255;
+    startingPoint.z = 0;
+    Vector3D currentPosition = startingPoint;
+    vector<Vector3D> startingAngle;
+    Vector3D H;
+    H.x = 1;
+    H.y = 0;
+    H.z = 0;
+    startingAngle.push_back(H);
+    Vector3D L;
+    L.x = 0;
+    L.y = 1;
+    L.z = 0;
+    startingAngle.push_back(L);
+    Vector3D U;
+    U.x = 0;
+    U.y = 0;
+    U.z = 1;
+    startingAngle.push_back(U);
+    vector<Vector3D> currentAngle = startingAngle;
     // 2. We overlopen de string S = s1s2 . . . sk van links naar rechts en voeren afhankelijk van het huidige symbool si volgende actie uit:
     for (int i = 0; i < replacementRule.size(); ++i) {
         // Si = +
         if (replacementRule[i] == '+') {
-            currentAngle += angle;
+            H = currentAngle[0];
+            L = currentAngle[1];
+            // Hnew = H cos(angle) + L sin(angle)
+            currentAngle[0] = H*cos(angle) + L*sin(angle);
+            // Lnew = - H sin(angle) - L cos(angle)
+            currentAngle[1] = -H*sin(angle) - L*cos(angle);
+            // Unew = U
         }
-            // Si = -
+        // Si = -
         else if (replacementRule[i] == '-') {
-            currentAngle -= angle;
+            H = currentAngle[0];
+            L = currentAngle[1];
+            // Hnew = H cos(-angle) + L sin(-angle)
+            currentAngle[0] = H*cos(-angle) + L*sin(-angle);
+            // Lnew = - H sin(-angle) - L cos(angle)
+            currentAngle[1] = -H*sin(-angle) - L*cos(-angle);
+            // Unew = U
         }
+        // Si = (
         else if (replacementRule[i] == '('){
-            //positionStack.push(startingPoint);
-            //angleStack.push(currentAngle);
+            positionStack.push(currentPosition);
+            angleStack.push(currentAngle);
         }
+        // Si == )
         else if (replacementRule[i] == ')'){
-            //startingPoint = positionStack.top();
-            //positionStack.pop();
-            //currentAngle = angleStack.top();
-            //angleStack.pop();
+            currentPosition = positionStack.top();
+            positionStack.pop();
+            currentAngle = angleStack.top();
+            angleStack.pop();
+        }
+        // Si == ^
+        else if (replacementRule[i] == '^'){
+            H = currentAngle[0];
+            U = currentAngle[2];
+            // Hnew = H cos(angle) + U sin(angle)
+            currentAngle[0] = H*cos(angle) + U*sin(angle);
+            // Lnew = L
+            // Unew = -H sin(angle) + U cos(angle)
+            currentAngle[2] = -H*sin(angle) + U*cos(angle);
+        }
+        // Si == &
+        else if (replacementRule[i] == '&'){
+            H = currentAngle[0];
+            U = currentAngle[2];
+            // Hnew = H cos(-angle) + U sin(-angle)
+            currentAngle[0] = H*cos(-angle) + U*sin(-angle);
+            // Lnew = L
+            // Unew = -H sin(angle) + U cos(angle)
+            currentAngle[2] = -H*sin(-angle) + U*cos(-angle);
+        }
+        // Si == '\'
+        else if (replacementRule[i] == '\\') {
+            L = currentAngle[1];
+            U = currentAngle[2];
+            // Hnew = H
+            // Lnew = L cos(angle) - U sin(angle)
+            currentAngle[1] = L*cos(angle) - U*sin(angle);
+            // Unew = L sin(angle) + U cos(angle)
+            currentAngle[2] = L*sin(angle) + U*cos(angle);
+        }
+        // Si == /
+        else if (replacementRule[i] == '/'){
+            L = currentAngle[1];
+            U = currentAngle[2];
+            // Hnew = H
+            // Lnew = L cos(-angle) - U sin(-angle)
+            currentAngle[1] = L*cos(-angle) - U*sin(-angle);
+            // Unew = L sin(angle) + U cos(angle)
+            currentAngle[2] = L*sin(-angle) + U*cos(-angle);
+        }
+        // Si == |
+        else if (replacementRule[i] == '|'){
+            H = currentAngle[0];
+            L = currentAngle[1];
+            // Hnew = -H
+            currentAngle[0] = -H;
+            // Lnew = -L
+            currentAngle[1] = -L;
+            // Unew = U
         }
         else{
             // Si e A1
             if (l_system.draw(replacementRule[i])) {
-                Point2D point;
-                point.x = startingPoint.x+cos(currentAngle);
-                point.y = startingPoint.y+sin(currentAngle);
-                Line2D line = Line2D(startingPoint, point, color);
-                lines.push_back(line);
-                startingPoint = point;
+                Vector3D point;
+                figure.points.push_back(currentPosition);
+                point = currentPosition+currentAngle[0];
+                figure.points.push_back(point);
+                cout << point.x << ", " << point.y << ", " << point.z << endl;
+                Face face;
+                face.point_indexes.push_back(figure.points.size()-1);
+                face.point_indexes.push_back(figure.points.size()-2);
+                figure.faces.push_back(face);
+                currentPosition = point;
             }
             // Si e A0
             if (l_system.draw(replacementRule[i]) == false) {
-                startingPoint.x = startingPoint.x+cos(currentAngle);
-                startingPoint.y = startingPoint.y+sin(currentAngle);
+                currentPosition += currentAngle[0];
             }
         }
-
     }
-    return lines;
+    return figure;
 }

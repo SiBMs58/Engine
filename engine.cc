@@ -46,28 +46,10 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         Lsystem lystem3D;
         // Maak een Lsystem - 2DLsystem voor draw2DLines function
         Lsystem2D lsystem;
-        // Maak een parser aan
-        LParser::LSystem3D LParser3D;
         // Define lines
         Lines2D lines;
-        int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
-        for (int i = 0; i < nrFigures; ++i) {
-            string figureType = configuration["Figure" + to_string(i)]["type"].as_string_or_die();
-            if (figureType == "3DLSystem") {
-                // 3DLSystem
-                string inputFile = configuration["Figure" + to_string(i)]["inputfile"].as_string_or_die();
-                vector<double> lineColor = configuration["Figure" + to_string(i)]["color"].as_double_tuple_or_die();
-                // Creëer if stream
-                ifstream file(inputFile);
-                // Steek in LParser
-                file >> LParser3D;
-                lines = lystem3D.drawLSystem(LParser3D, lineColor);
-            } else {
-                vector<Figure> figures = lystem3D.generateFigures(configuration);
-                lines = lystem3D.doProjection(figures);
-                break;
-            }
-        }
+        vector<Figure> figures = lystem3D.generateFigures(configuration);
+        lines = lystem3D.doProjection(figures);
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
