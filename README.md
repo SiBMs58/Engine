@@ -17,7 +17,7 @@ X: Niet werkend of niet geïmplementeerd
 | 3 | Platonische Lichamen      | V |
 |   | Kegel en cylinder         | V |
 |   | Bol                       | V |
-|   | Torus                     |  |
+|   | Torus                     | V |
 |   | 3D L-systemen             | V |
 | 4 | Z-buffering (lijnen)      |  |
 | 5 | Triangulatie              |  |

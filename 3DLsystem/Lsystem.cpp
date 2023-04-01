@@ -856,17 +856,19 @@ Figure Lsystem::createTorus(const double r, const double R, const int n, const i
             // Punten
             Vector3D point = Vector3D::point(Xuv,Yuv,Zuv);
             figure.points.push_back(point);
-            // Faces
-            if (i >= 1 and i < n+1){
+            if (i <= n-1){
+                // Faces
                 Face face;
-                face.point_indexes.push_back(figure.points.size()-m-2);
                 face.point_indexes.push_back(figure.points.size()-1);
+                face.point_indexes.push_back(figure.points.size()+m);
+                face.point_indexes.push_back(figure.points.size()+m+1);
                 face.point_indexes.push_back(figure.points.size());
-                face.point_indexes.push_back(figure.points.size()-m-1);
                 figure.faces.push_back(face);
             }
         }
     }
+    // Fix bug last line
+    figure.faces.pop_back();
     return figure;
 }
 
