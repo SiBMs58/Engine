@@ -23,15 +23,6 @@ public:
     void toPolar(const Vector3D &point, double &theta, double &phi, double &r);
     Lines2D doProjection(const Figures3D &figures);
     Point2D generatePoint2D(const Vector3D &point,const double d);
-    Figure createCube();
-    Figure createTetrahedron();
-    Figure createIcosahedron();
-    Figure createOctahedron();
-    Figure createDodecahedron();
-    Figure createCone(const int n, const double h);
-    Figure createCylinder(const int n, const double h);
-    Figure createSphere(const double radius, const int n);
-    Figure createTorus(const double r,const double R, const int n, const int m);
 
     Figure drawLSystem(const LParser::LSystem3D &l_system);
 
