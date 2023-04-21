@@ -8,9 +8,12 @@
 #include <string>
 #include <stack>
 #include <cmath>
+#include <vector>
+#include <limits>
 #include "../l_parser.h"
 #include "2DLine/Line2D.h"
 #include "../easy_image.h"
+#include "./ZBuffer.h"
 
 using namespace std;
 
@@ -23,6 +26,8 @@ private:
 public:
     Lines2D drawLSystem(const LParser::LSystem2D &l_system, const vector<double> &lineColor);
     img::EasyImage draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor);
+    img::EasyImage drawZbufLines(Lines2D &lines, const int size, const vector<double> &backgroundColor);
 };
+
 
 #endif //ENGINE_LSYSTEM2D_H

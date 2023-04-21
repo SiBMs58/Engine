@@ -171,7 +171,7 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
                 Vector3D vectorPoint2 = Vector3D::point(figures[i].points[point_index2].x, figures[i].points[point_index2].y, figures[i].points[point_index2].z);
                 Point2D point1 = generatePoint2D(vectorPoint1, 1);
                 Point2D point2 = generatePoint2D(vectorPoint2, 1);
-                Line2D line = Line2D(point1, point2, figures[i].color);
+                Line2D line = Line2D(point1, point2, figures[i].color, vectorPoint1.z, vectorPoint2.z);
                 lines.push_back(line);
             }
             // Add line from last point_index to first one
@@ -181,7 +181,7 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
             Vector3D vectorPoint2 = Vector3D::point(figures[i].points[point_index2].x, figures[i].points[point_index2].y, figures[i].points[point_index2].z);
             Point2D point1 = generatePoint2D(vectorPoint1, 1);
             Point2D point2 = generatePoint2D(vectorPoint2, 1);
-            Line2D line = Line2D(point1, point2, figures[i].color);
+            Line2D line = Line2D(point1, point2, figures[i].color, vectorPoint1.z, vectorPoint2.z);
             lines.push_back(line);
         }
     }

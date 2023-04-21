@@ -15,7 +15,16 @@ public:
     Color color;
 
     Line2D(const Point2D &p1, const Point2D &p2, const Color &color) : p1(p1), p2(p2), color(color) {}
+
+    Line2D(const Point2D &p1, const Point2D &p2, const Color &color, double z1, double z2) : p1(p1), p2(p2),
+                                                                                             color(color), z1(z1),
+                                                                                             z2(z2) {}
+
+    double z1;
+    double z2;
 };
+
+
 
 
 #endif //ENGINE_LINE2D_H

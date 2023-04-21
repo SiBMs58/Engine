@@ -41,7 +41,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         Lines2D lines = lsystem.drawLSystem(LParser2D, lineColor);
         image = lsystem.draw2DLines(lines, size, backgroundColor);
     }
-    if (type == "Wireframe"){
+    else if (type == "Wireframe"){
         // Maak een lsystem3D
         Lsystem lystem3D;
         // Maak een Lsystem - 2DLsystem voor draw2DLines function
@@ -54,6 +54,19 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
         image = lsystem.draw2DLines(lines, size, backgroundColor);
+    } else if (type == "ZBufferedWireframe"){
+        // Maak een lsystem3D
+        Lsystem lystem3D;
+        // Maak een Lsystem - 2DLsystem voor draw2DLines function
+        Lsystem2D lsystem;
+        // Define lines
+        Lines2D lines;
+        vector<Figure> figures = lystem3D.generateFigures(configuration);
+        lines = lystem3D.doProjection(figures);
+        // Draw image
+        int size = configuration["General"]["size"].as_int_or_die();
+        vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
+        image = lsystem.drawZbufLines(lines, size, backgroundColor);
     }
     return image;
 }
