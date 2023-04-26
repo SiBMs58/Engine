@@ -251,6 +251,7 @@ img::EasyImage Lsystem2D::drawZbufLines(Lines2D &lines, const int size, const ve
         color.red = lines[i].color.red;
         color.green = lines[i].color.green;
         color.blue = lines[i].color.blue;
+
         zbuffer.draw_zbuf_line(zbuffer, image, lines[i].p1.x, lines[i].p1.y, lines[i].z1, lines[i].p2.x, lines[i].p2.y, lines[i].z2, color);
     }
     return image;
