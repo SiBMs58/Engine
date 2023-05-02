@@ -26,7 +26,7 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
     /**
      * a = length of the line
      * s = i, according to cursus
-     * i = iterator of drawing the line
+     * i = iterator of drawing the line (based on draw_line function)
      */
 
     if (x0 >= image.get_width() || y0 >= image.get_height() || x1 >= image.get_width() || y1 > image.get_height()) {
