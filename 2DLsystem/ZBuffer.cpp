@@ -37,16 +37,17 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
     }
     if (x0 == x1)
     {
+        //special case for x0 == x1
         unsigned int a = std::max(y0, y1) - std::min(y0, y1)+1;
         unsigned int s = a;
         unsigned int i = std::min(y0, y1);
         while (i <= std::max(y0, y1)) {
             double p = s / a;
-            if (y0 > y1){
+            if (y0 < y1){
                 std::swap(z0, z1);
                 std::swap(x0, x1);
             }
-            double Zi = p / z0 + (1 - p) / z1;;
+            double Zi = p / z0 + (1 - p) / z1;
             if (Zi < zbuffer[x0][i]) {
                 image(x0, i) = c;
                 zbuffer[x0][i] = Zi;
@@ -63,7 +64,7 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
         unsigned int i = std::min(x0, x1);
         while (i <= std::max(x0, x1)) {
             double p = s/a;
-            if (x0 > x1) {
+            if (x0 < x1) {
                 std::swap(z0, z1);
                 std::swap(y0, y1);
             }
