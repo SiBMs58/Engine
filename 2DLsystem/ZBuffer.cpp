@@ -20,16 +20,14 @@ ZBuffer::ZBuffer(const int width, const int height) {
 }
 
 void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned int x0, unsigned int y0, double z0, unsigned int x1, unsigned int y1, double z1, Color &color) {
+
     img::Color c = img::Color(color.red, color.green, color.blue);
-    /*img::Color blue = img::Color(0, 0, 255);
-    img::Color orange = img::Color(255, 150, 50);
-    img::Color bordeax = img::Color(150, 50, 0);
-    img::Color roze = img::Color(255, 0, 150);
-    img::Color green = img::Color(0, 255, 50);*/
 
-
-
-
+    /**
+     * a = length of the line
+     * s = i, according to cursus
+     * i = iterator of drawing the line
+     */
 
     if (x0 >= image.get_width() || y0 >= image.get_height() || x1 >= image.get_width() || y1 > image.get_height()) {
         std::stringstream ss;
@@ -39,10 +37,11 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
     }
     if (x0 == x1)
     {
-        double a = std::max(y0, y1) - std::min(y0, y1);
-        //special case for x0 == x1
-        for (unsigned int i = std::min(y0, y1); i <= std::max(y0, y1); i++) {
-            double p = i / a;
+        unsigned int a = std::max(y0, y1) - std::min(y0, y1)+1;
+        unsigned int s = a;
+        unsigned int i = std::min(y0, y1);
+        while (i <= std::max(y0, y1)) {
+            double p = s / a;
             if (y0 > y1){
                 std::swap(z0, z1);
                 std::swap(x0, x1);
@@ -52,17 +51,18 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
                 image(x0, i) = c;
                 zbuffer[x0][i] = Zi;
             }
-            a--;
+            i++;
+            s--;
         }
     }
     else if (y0 == y1)
     {
-
-        double a = std::max(x0, x1) - std::min(x0, x1);
         //special case for y0 == y1
-        for (unsigned int i = std::min(x0, x1); i <= std::max(x0, x1); i++)
-        {
-            double p = i/a;
+        unsigned int a = std::max(x0, x1) - std::min(x0, x1)+1;
+        unsigned int s = a;
+        unsigned int i = std::min(x0, x1);
+        while (i <= std::max(x0, x1)) {
+            double p = s/a;
             if (x0 > x1) {
                 std::swap(z0, z1);
                 std::swap(y0, y1);
@@ -72,7 +72,8 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
                 image(i, y0) = c;
                 zbuffer[i][y0] = Zi;
             }
-            a--;
+            i++;
+            s--;
         }
     }
     else
@@ -87,44 +88,50 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
         double m = ((double) y1 - (double) y0) / ((double) x1 - (double) x0);
         if (-1.0 <= m && m <= 1.0)
         {
-            double a = (x1 - x0);
-            for (unsigned int i = 0; i <= (x1 - x0); i++)
-            {
-                double p = i/a;
+            unsigned int a = (x1 - x0)+1;
+            unsigned int s = a;
+            unsigned int i = 0;
+            while (i <= (x1 - x0)) {
+                double p = s/a;
                 double Zi = p/z0 + (1-p)/z1;
                 if (Zi < zbuffer[x0 + i][(unsigned int) round(y0 + m * i)]) {
                     image(x0 + i, (unsigned int) round(y0 + m * i)) = c;
                     zbuffer[x0 + i][(unsigned int) round(y0 + m * i)] = Zi;
                 }
-                a--;
+                s--;
+                i++;
             }
         }
         else if (m > 1.0)
         {
-            double a = (y1 - y0);
-            for (unsigned int i = 0; i <= (y1 - y0); i++)
-            {
+            unsigned int a = (y1 - y0)+1;
+            unsigned int s = a;
+            unsigned int i = 0;
+            while (i <= (y1 - y0)) {
                 double p = i/a;
                 double Zi = p/z0 + (1-p)/z1;
                 if (Zi < zbuffer[(unsigned int) round(x0 + (i / m))][y0 + i]) {
                     image((unsigned int) round(x0 + (i / m)), y0 + i) = c;
                     zbuffer[(unsigned int) round(x0 + (i / m))][y0 + i] = Zi;
                 }
-                a--;
+                i++;
+                s--;
             }
         }
         else if (m < -1.0)
         {
-            double a = (y1 - y0);
-            for (unsigned int i = 0; i <= (y0 - y1); i++)
-            {
+            unsigned int a = (y0 - y1)+1;
+            unsigned int s = a;
+            unsigned int i = 0;
+            while (i <= (y0 - y1)) {
                 double p = i/a;
                 double Zi = p/z0 + (1-p)/z1;
                 if (Zi < zbuffer[(unsigned int) round(x0 - (i / m))][y0 - i]) {
                     image((unsigned int) round(x0 - (i / m)), y0 - i) = c;
                     zbuffer[(unsigned int) round(x0 - (i / m))][y0 - i] = Zi;
                 }
-                a--;
+                i++;
+                s--;
             }
         }
     }
