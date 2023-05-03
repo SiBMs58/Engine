@@ -33,84 +33,6 @@ string getReplacementRule(const LParser::LSystem2D &Lsystem) {
     return replacementRule;
 }
 
-img::EasyImage Lsystem2D::draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor) {
-    // 1. Bepaal Xmin, Xmax, Ymin en Ymax
-    double Xmax = lines[0].p1.x;
-    double Xmin = lines[0].p1.x;
-    double Ymax = lines[0].p1.y;
-    double Ymin = lines[0].p1.y;
-    for (int i = 0; i < lines.size(); ++i) {
-        if (Xmax < lines[i].p1.x){
-            Xmax = lines[i].p1.x;
-        }
-        if (Xmin > lines[i].p1.x){
-            Xmin = lines[i].p1.x;
-        }
-        if (Xmax < lines[i].p2.x){
-            Xmax = lines[i].p2.x;
-        }
-        if (Xmin > lines[i].p2.x){
-            Xmin = lines[i].p2.x;
-        }
-        if (Ymax < lines[i].p1.y){
-            Ymax = lines[i].p1.y;
-        }
-        if (Ymin > lines[i].p1.y){
-            Ymin = lines[i].p1.y;
-        }
-        if (Ymax < lines[i].p2.y){
-            Ymax = lines[i].p2.y;
-        }
-        if (Ymin > lines[i].p2.y){
-            Ymin = lines[i].p2.y;
-        }
-    }
-    double Xrange = Xmax - Xmin;
-    double Yrange = Ymax - Ymin;
-    // 2. Bereken de grootte van de image
-    double imageX = size*((Xrange)/max(Xrange, Yrange));
-    double imageY = size*((Yrange)/max(Xrange, Yrange));
-    // 2.1 Maak image
-    img::EasyImage image(imageX, imageY);
-    // 2.2 Set backgroundColor van de image
-    for(unsigned int i = 0; i < image.get_width(); i++) {
-        for(unsigned int j = 0; j < image.get_height(); j++) {
-            image(i,j).red = backgroundColor[0]*255;
-            image(i,j).green = backgroundColor[1]*255;
-            image(i,j).blue = backgroundColor[2]*255;
-        }
-    }
-    // 3. Schaal de lijntekening
-    // 3.1 Bereken de schaalfactor
-    double d = 0.95*(imageX/Xrange);
-    // 3.2 Vermenigvuldig de coördinaten van alle punten met d
-    for (int i = 0; i < lines.size(); ++i) {
-        lines[i].p1.x = lines[i].p1.x*d;
-        lines[i].p1.y = lines[i].p1.y*d;
-        lines[i].p2.x = lines[i].p2.x*d;
-        lines[i].p2.y = lines[i].p2.y*d;
-    }
-    // 4. Verschuif de lijntekening
-    // 4.1 Bereken
-    double DCx = d*((Xmin+Xmax)/2);
-    double DCy = d*((Ymin+Ymax)/2);
-    double dx = (imageX/2)-DCx;
-    double dy = (imageY/2)-DCy;
-    // 4.2 Tel bij alle punten van de lijntekening (dx, dy) op.
-    for (int i = 0; i < lines.size(); ++i) {
-        lines[i].p1.x = lines[i].p1.x+dx;
-        lines[i].p1.y = lines[i].p1.y+dy;
-        lines[i].p2.x = lines[i].p2.x+dx;
-        lines[i].p2.y = lines[i].p2.y+dy;
-    }
-    // 5. Rond de coördinaten van de punten af, en teken de lijnen op de image
-    for (int i = 0; i < lines.size(); ++i) {
-        img::Color lineColor = img::Color(lines[i].color.red, lines[i].color.green, lines[i].color.blue);
-        image.draw_line(lround(lines[i].p1.x), lround(lines[i].p1.y), lround(lines[i].p2.x), lround(lines[i].p2.y), lineColor);
-    }
-    return image;
-}
-
 Lines2D Lsystem2D::drawLSystem(const LParser::LSystem2D &l_system, const vector<double> &lineColor) {
     // Maak lines2D aan
     Lines2D lines;
@@ -174,7 +96,107 @@ Lines2D Lsystem2D::drawLSystem(const LParser::LSystem2D &l_system, const vector<
     return lines;
 }
 
+img::EasyImage Lsystem2D::draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor) {
+    map<string, double> resultCalculations = calculateImageSizeAndScales(lines, size);
+    // 1. Bepaal Xmin, Xmax, Ymin en Ymax
+    // 2. Bereken de grootte van de image
+    double imageX = resultCalculations["imageX"];
+    double imageY = resultCalculations["imageY"];
+    // 2.1 Maak image
+    img::EasyImage image(imageX, imageY);
+    // 2.2 Set backgroundColor van de image
+    for(unsigned int i = 0; i < image.get_width(); i++) {
+        for(unsigned int j = 0; j < image.get_height(); j++) {
+            image(i,j).red = backgroundColor[0]*255;
+            image(i,j).green = backgroundColor[1]*255;
+            image(i,j).blue = backgroundColor[2]*255;
+        }
+    }
+    // 3. Schaal de lijntekening
+    // 3.1 Bereken de schaalfactor
+    double d = resultCalculations["d"];
+    // 3.2 Vermenigvuldig de coördinaten van alle punten met d
+    for (int i = 0; i < lines.size(); ++i) {
+        lines[i].p1.x = lines[i].p1.x*d;
+        lines[i].p1.y = lines[i].p1.y*d;
+        lines[i].p2.x = lines[i].p2.x*d;
+        lines[i].p2.y = lines[i].p2.y*d;
+    }
+    // 4. Verschuif de lijntekening
+    // 4.1 Bereken
+    double DCx = resultCalculations["DCx"];
+    double DCy = resultCalculations["DCy"];
+    double dx = resultCalculations["dx"];
+    double dy = resultCalculations["dy"];
+    // 4.2 Tel bij alle punten van de lijntekening (dx, dy) op.
+    for (int i = 0; i < lines.size(); ++i) {
+        lines[i].p1.x = lines[i].p1.x+dx;
+        lines[i].p1.y = lines[i].p1.y+dy;
+        lines[i].p2.x = lines[i].p2.x+dx;
+        lines[i].p2.y = lines[i].p2.y+dy;
+    }
+    // 5. Rond de coördinaten van de punten af, en teken de lijnen op de image
+    for (int i = 0; i < lines.size(); ++i) {
+        img::Color lineColor = img::Color(lines[i].color.red, lines[i].color.green, lines[i].color.blue);
+        image.draw_line(lround(lines[i].p1.x), lround(lines[i].p1.y), lround(lines[i].p2.x), lround(lines[i].p2.y), lineColor);
+    }
+    return image;
+}
+
 img::EasyImage Lsystem2D::drawZbufLines(Lines2D &lines, const int size, const vector<double> &backgroundColor) {
+    map<string, double> resultCalculations = calculateImageSizeAndScales(lines, size);
+    // 1. Bepaal Xmin, Xmax, Ymin en Ymax
+    // 2. Bereken de grootte van de image
+    double imageX = resultCalculations["imageX"];
+    double imageY = resultCalculations["imageY"];
+    // 2.1 Maak image en Zbuffer aan
+    ZBuffer zbuffer = ZBuffer(ceil(imageX), ceil(imageY));
+    img::EasyImage image(imageX, imageY);
+    // 2.2 Set backgroundColor van de image
+    for(unsigned int i = 0; i < image.get_width(); i++) {
+        for(unsigned int j = 0; j < image.get_height(); j++) {
+            image(i,j).red = backgroundColor[0]*255;
+            image(i,j).green = backgroundColor[1]*255;
+            image(i,j).blue = backgroundColor[2]*255;
+        }
+    }
+    // 3. Schaal de lijntekening
+    // 3.1 Bereken de schaalfactor
+    double d = resultCalculations["d"];
+    // 3.2 Vermenigvuldig de coördinaten van alle punten met d
+    for (int i = 0; i < lines.size(); ++i) {
+        lines[i].p1.x = lines[i].p1.x*d;
+        lines[i].p1.y = lines[i].p1.y*d;
+        lines[i].p2.x = lines[i].p2.x*d;
+        lines[i].p2.y = lines[i].p2.y*d;
+    }
+    // 4. Verschuif de lijntekening
+    // 4.1 Bereken
+    double DCx = resultCalculations["DCx"];
+    double DCy = resultCalculations["DCy"];
+    double dx = resultCalculations["dx"];
+    double dy = resultCalculations["dy"];
+    // 4.2 Tel bij alle punten van de lijntekening (dx, dy) op.
+    for (int i = 0; i < lines.size(); ++i) {
+        lines[i].p1.x = lines[i].p1.x+dx;
+        lines[i].p1.y = lines[i].p1.y+dy;
+        lines[i].p2.x = lines[i].p2.x+dx;
+        lines[i].p2.y = lines[i].p2.y+dy;
+    }
+    // 5. Rond de coördinaten van de punten af, en teken de lijnen op de image
+    for (int i = 0; i < lines.size(); ++i) {
+        Color color;
+        color.red = lines[i].color.red;
+        color.green = lines[i].color.green;
+        color.blue = lines[i].color.blue;
+
+        zbuffer.draw_zbuf_line(zbuffer, image, lines[i].p1.x, lines[i].p1.y, lines[i].z1, lines[i].p2.x, lines[i].p2.y, lines[i].z2, color);
+    }
+    return image;
+}
+
+map<string, double> Lsystem2D::calculateImageSizeAndScales(Lines2D &lines, const int size) {
+    map<string, double> result;
     // 1. Bepaal Xmin, Xmax, Ymin en Ymax
     double Xmax = lines[0].p1.x;
     double Xmin = lines[0].p1.x;
@@ -210,49 +232,22 @@ img::EasyImage Lsystem2D::drawZbufLines(Lines2D &lines, const int size, const ve
     double Yrange = Ymax - Ymin;
     // 2. Bereken de grootte van de image
     double imageX = size*((Xrange)/max(Xrange, Yrange));
+    result["imageX"] = imageX;
     double imageY = size*((Yrange)/max(Xrange, Yrange));
-    // 2.1 Maak image en Zbuffer aan
-    ZBuffer zbuffer = ZBuffer(ceil(imageX), ceil(imageY));
-    img::EasyImage image(imageX, imageY);
-    // 2.2 Set backgroundColor van de image
-    for(unsigned int i = 0; i < image.get_width(); i++) {
-        for(unsigned int j = 0; j < image.get_height(); j++) {
-            image(i,j).red = backgroundColor[0]*255;
-            image(i,j).green = backgroundColor[1]*255;
-            image(i,j).blue = backgroundColor[2]*255;
-        }
-    }
+    result["imageY"] = imageY;
     // 3. Schaal de lijntekening
     // 3.1 Bereken de schaalfactor
     double d = 0.95*(imageX/Xrange);
-    // 3.2 Vermenigvuldig de coördinaten van alle punten met d
-    for (int i = 0; i < lines.size(); ++i) {
-        lines[i].p1.x = lines[i].p1.x*d;
-        lines[i].p1.y = lines[i].p1.y*d;
-        lines[i].p2.x = lines[i].p2.x*d;
-        lines[i].p2.y = lines[i].p2.y*d;
-    }
+    result["d"] = d;
     // 4. Verschuif de lijntekening
     // 4.1 Bereken
     double DCx = d*((Xmin+Xmax)/2);
+    result["DCx"] = DCx;
     double DCy = d*((Ymin+Ymax)/2);
+    result["DCy"] = DCy;
     double dx = (imageX/2)-DCx;
+    result["dx"] = dx;
     double dy = (imageY/2)-DCy;
-    // 4.2 Tel bij alle punten van de lijntekening (dx, dy) op.
-    for (int i = 0; i < lines.size(); ++i) {
-        lines[i].p1.x = lines[i].p1.x+dx;
-        lines[i].p1.y = lines[i].p1.y+dy;
-        lines[i].p2.x = lines[i].p2.x+dx;
-        lines[i].p2.y = lines[i].p2.y+dy;
-    }
-    // 5. Rond de coördinaten van de punten af, en teken de lijnen op de image
-    for (int i = 0; i < lines.size(); ++i) {
-        Color color;
-        color.red = lines[i].color.red;
-        color.green = lines[i].color.green;
-        color.blue = lines[i].color.blue;
-
-        zbuffer.draw_zbuf_line(zbuffer, image, lines[i].p1.x, lines[i].p1.y, lines[i].z1, lines[i].p2.x, lines[i].p2.y, lines[i].z2, color);
-    }
-    return image;
+    result["dy"] = dy;
+    return result;
 }

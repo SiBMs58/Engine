@@ -138,3 +138,28 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
     }
 
 }
+
+void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vector3D &A, const Vector3D &B, const Vector3D &C,
+                              double d, double dx, double dy, Color color) {
+
+    img::Color c = img::Color(color.red, color.green, color.blue);
+
+    // Projectie van de driehoek
+    double xA = (d*A.x/-A.z)+d*A.x;
+    double yA = (d*A.y/-A.z)+d*A.y;
+    Point2D projectA;
+    projectA.x = xA;
+    projectA.y = yA;
+    double xB = (d*B.x/-B.z)+d*B.x;
+    double yB = (d*B.y/-B.z)+d*B.y;
+    Point2D projectB;
+    projectB.x = xB;
+    projectB.y = yB;
+    double xC = (d*C.x/-C.z)+d*C.x;
+    double yC = (d*C.y/-C.z)+d*C.y;
+    Point2D projectC;
+    projectC.x = xC;
+    projectC.y = yC;
+
+
+}

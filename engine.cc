@@ -84,11 +84,11 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
             }
             fig.faces = triangleFaces;
         }
-        lines = lsystem3D.doProjection(figures);
+        //lines = lsystem3D.doProjection(figures);
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
-        image = lsystem.drawZbufLines(lines, size, backgroundColor);
+        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor);
     }
     return image;
 }

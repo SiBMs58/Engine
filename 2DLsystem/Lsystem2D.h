@@ -8,6 +8,7 @@
 #include <string>
 #include <stack>
 #include <cmath>
+#include <map>
 #include <vector>
 #include <limits>
 #include "../l_parser.h"
@@ -27,6 +28,7 @@ public:
     Lines2D drawLSystem(const LParser::LSystem2D &l_system, const vector<double> &lineColor);
     img::EasyImage draw2DLines(Lines2D &lines, const int size, const vector<double> &backgroundColor);
     img::EasyImage drawZbufLines(Lines2D &lines, const int size, const vector<double> &backgroundColor);
+    map<string, double> calculateImageSizeAndScales(Lines2D &lines, const int size);
 };
 
 

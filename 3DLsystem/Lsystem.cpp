@@ -364,3 +364,53 @@ vector<Face> Lsystem::triangulate(const Face &face) {
 
     return triangles;
 }
+
+img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int size, const vector<double> &backgroundColor) {
+    Lines2D lines = doProjection(figures);
+    Lsystem2D lsystem2D;
+    map<string, double> resultCalculations = lsystem2D.calculateImageSizeAndScales(lines, size);
+    // 1. Bepaal Xmin, Xmax, Ymin en Ymax
+    // 2. Bereken de grootte van de image
+    double imageX = resultCalculations["imageX"];
+    double imageY = resultCalculations["imageY"];
+    // 2.1 Maak image en Zbuffer aan
+    ZBuffer zbuffer = ZBuffer(ceil(imageX), ceil(imageY));
+    img::EasyImage image(imageX, imageY);
+    // 2.2 Set backgroundColor van de image
+    for(unsigned int i = 0; i < image.get_width(); i++) {
+        for(unsigned int j = 0; j < image.get_height(); j++) {
+            image(i,j).red = backgroundColor[0]*255;
+            image(i,j).green = backgroundColor[1]*255;
+            image(i,j).blue = backgroundColor[2]*255;
+        }
+    }
+    // 3. Schaal de lijntekening
+    // 3.1 Bereken de schaalfactor
+    double d = resultCalculations["d"];
+    // 3.2 Vermenigvuldig de coördinaten van alle punten met d
+    // 4. Verschuif de lijntekening
+    // 4.1 Bereken
+    double DCx = resultCalculations["DCx"];
+    double DCy = resultCalculations["DCy"];
+    double dx = resultCalculations["dx"];
+    double dy = resultCalculations["dy"];
+    // 4.2 Tel bij alle punten van de lijntekening (dx, dy) op.
+    // 5. Rond de coördinaten van de punten af, en teken de lijnen op de image
+    for (Figure &fig : figures) {
+        for (int i = 0; i < fig.faces.size(); ++i) {
+            for (int k = 0; k < fig.faces[i].point_indexes.size()-1; ++k) {
+                int point_index1 = fig.faces[i].point_indexes[k];
+                int point_index2 = fig.faces[i].point_indexes[k+1];
+                int point_index3 = fig.faces[i].point_indexes[k+2];
+                Vector3D vectorPoint1 = Vector3D::point(fig.points[point_index1].x, fig.points[point_index1].y, fig.points[point_index1].z);
+                Vector3D vectorPoint2 = Vector3D::point(fig.points[point_index2].x, fig.points[point_index2].y, fig.points[point_index2].z);
+                Vector3D vectorPoint3 = Vector3D::point(fig.points[point_index3].x, fig.points[point_index3].y, fig.points[point_index3].z);
+
+                zbuffer.draw_zbuf_triag(zbuffer, image, vectorPoint1, vectorPoint2, vectorPoint3, d, dx, dy, fig.color);
+
+            }
+        }
+    }
+
+    return image;
+}

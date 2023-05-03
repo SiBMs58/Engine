@@ -10,6 +10,8 @@
 #include "../ini_configuration.h"
 #include "../2DLsystem/2DLine/Line2D.h"
 #include "../l_parser.h"
+#include "../2DLsystem/ZBuffer.h"
+#include "../2DLsystem/Lsystem2D.h"
 #include <stack>
 
 using Lines2D = vector<Line2D>;
@@ -27,6 +29,7 @@ public:
     Figure drawLSystem(const LParser::LSystem3D &l_system);
 
     vector<Face> triangulate(const Face& face);
+    img::EasyImage drawZbufTriangles(vector<Figure>& figures, const int size, const vector<double> &backgroundColor);
 
 private:
     stack<Vector3D> positionStack;
