@@ -38,8 +38,8 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
     if (x0 == x1)
     {
         //special case for x0 == x1
-        unsigned int a = std::max(y0, y1) - std::min(y0, y1)+1;
-        unsigned int s = a;
+        double a = std::max(y0, y1) - std::min(y0, y1)+1;
+        double s = a;
         unsigned int i = std::min(y0, y1);
         while (i <= std::max(y0, y1)) {
             double p = s / a;
@@ -59,8 +59,8 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
     else if (y0 == y1)
     {
         //special case for y0 == y1
-        unsigned int a = std::max(x0, x1) - std::min(x0, x1)+1;
-        unsigned int s = a;
+        double a = std::max(x0, x1) - std::min(x0, x1)+1;
+        double s = a;
         unsigned int i = std::min(x0, x1);
         while (i <= std::max(x0, x1)) {
             double p = s/a;
@@ -89,8 +89,8 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
         double m = ((double) y1 - (double) y0) / ((double) x1 - (double) x0);
         if (-1.0 <= m && m <= 1.0)
         {
-            unsigned int a = (x1 - x0)+1;
-            unsigned int s = a;
+            double a = (x1 - x0)+1;
+            double s = a;
             unsigned int i = 0;
             while (i <= (x1 - x0)) {
                 double p = s/a;
@@ -105,8 +105,8 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
         }
         else if (m > 1.0)
         {
-            unsigned int a = (y1 - y0)+1;
-            unsigned int s = a;
+            double a = (y1 - y0)+1;
+            double s = a;
             unsigned int i = 0;
             while (i <= (y1 - y0)) {
                 double p = i/a;
@@ -121,8 +121,8 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
         }
         else if (m < -1.0)
         {
-            unsigned int a = (y0 - y1)+1;
-            unsigned int s = a;
+            double a = (y0 - y1)+1;
+            double s = a;
             unsigned int i = 0;
             while (i <= (y0 - y1)) {
                 double p = i/a;
