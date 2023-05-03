@@ -22,9 +22,11 @@ public:
     Matrix eyePointTrans(Vector3D &eyepoint);
     void toPolar(const Vector3D &point, double &theta, double &phi, double &r);
     Lines2D doProjection(const Figures3D &figures);
-    Point2D generatePoint2D(const Vector3D &point,const double d);
+    Point2D generatePoint2D(const Vector3D &point, const double d);
 
     Figure drawLSystem(const LParser::LSystem3D &l_system);
+
+    vector<Face> triangulate(const Face& face);
 
 private:
     stack<Vector3D> positionStack;

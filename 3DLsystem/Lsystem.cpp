@@ -351,3 +351,16 @@ Figure Lsystem::drawLSystem(const LParser::LSystem3D &l_system) {
     }
     return figure;
 }
+
+vector<Face> Lsystem::triangulate(const Face &face) {
+    vector<Face> triangles;
+    for (int i = 1; i < face.point_indexes.size()-1; ++i) {
+        Face newFace;
+        newFace.point_indexes.push_back(face.point_indexes[0]);
+        newFace.point_indexes.push_back(face.point_indexes[i]);
+        newFace.point_indexes.push_back(face.point_indexes[i+1]);
+        triangles.push_back(newFace);
+    }
+
+    return triangles;
+}
