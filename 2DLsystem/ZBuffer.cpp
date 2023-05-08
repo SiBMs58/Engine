@@ -140,12 +140,25 @@ void ZBuffer::draw_zbuf_line(ZBuffer &zbuffer, img::EasyImage &image, unsigned i
 
 }
 
+void calculateXvals(const Point2D &p, const Point2D &q, const double y, double &xL, double &xR) {
+    if ((y - p.y) <= 0 && (y - q.y) <= 0 && p.y != q.y) {
+        double xI = q.x + (p.x - q.x)*((y - q.y) / (p.y - q.y));
+        if (xI < xL) {
+            xL = xI;
+        }
+        if (xI > xR) {
+            xR = xI;
+        }
+    }
+
+}
+
 void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vector3D &A, const Vector3D &B, const Vector3D &C,
                               double d, double dx, double dy, Color color) {
 
     img::Color c = img::Color(color.red, color.green, color.blue);
 
-    // Projectie van de driehoek
+    // 1. Projectie van de driehoek
     Point2D projectA;
     double xA = (d*A.x/-A.z)+dx;
     double yA = (d*A.y/-A.z)+dy;
@@ -162,10 +175,20 @@ void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vec
     projectC.x = xC;
     projectC.y = yC;
 
-    // Bepalen van de pixels die tot de 3-hoek A’B’C’ behoren
+    // 2. Bepalen van de pixels die tot de 3-hoek A’B’C’ behoren
+    // 2.1 y-waardes
     for (int i = round(std::min({projectA.y, projectB.y, projectC.y})+1/2); i <= round(std::max({projectA.y, projectB.y, projectC.y})-1/2); i++) {
-        // TODO
+        double xL = std::numeric_limits<double>::infinity();
+        double xR = -std::numeric_limits<double>::infinity();
+        calculateXvals(projectA, projectB, i, xL, xR);
+        calculateXvals(projectA, projectC, i, xL, xR);
+        calculateXvals(projectB, projectC, i, xL, xR);
+        for (int j = xL; j < xR; j++) {
+            image(j, i) = c;
+        }
     }
+
+    // 3. De 1/z waarde voor elke pixel berekenen
 
 
 }
