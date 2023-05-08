@@ -228,8 +228,14 @@ map<string, double> Lsystem2D::calculateImageSizeAndScales(Lines2D &lines, const
             Ymin = lines[i].p2.y;
         }
     }
+    result["Xmax"] = Xmax;
+    result["Xmin"] = Xmin;
+    result["Ymax"] = Ymax;
+    result["Ymin"] = Ymin;
     double Xrange = Xmax - Xmin;
+    result["Xrange"] = Xrange;
     double Yrange = Ymax - Ymin;
+    result["Yrange"] = Yrange;
     // 2. Bereken de grootte van de image
     double imageX = size*((Xrange)/max(Xrange, Yrange));
     result["imageX"] = imageX;

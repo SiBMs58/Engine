@@ -4,6 +4,7 @@
 
 #include "ZBuffer.h"
 #include <iostream>
+#include <algorithm>
 
 
 ZBuffer::ZBuffer(const int width, const int height) {
@@ -145,21 +146,26 @@ void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vec
     img::Color c = img::Color(color.red, color.green, color.blue);
 
     // Projectie van de driehoek
-    double xA = (d*A.x/-A.z)+d*A.x;
-    double yA = (d*A.y/-A.z)+d*A.y;
     Point2D projectA;
+    double xA = (d*A.x/-A.z)+dx;
+    double yA = (d*A.y/-A.z)+dy;
     projectA.x = xA;
     projectA.y = yA;
-    double xB = (d*B.x/-B.z)+d*B.x;
-    double yB = (d*B.y/-B.z)+d*B.y;
     Point2D projectB;
+    double xB = (d*B.x/-B.z)+dx;
+    double yB = (d*B.y/-B.z)+dy;
     projectB.x = xB;
     projectB.y = yB;
-    double xC = (d*C.x/-C.z)+d*C.x;
-    double yC = (d*C.y/-C.z)+d*C.y;
     Point2D projectC;
+    double xC = (d*C.x/-C.z)+dx;
+    double yC = (d*C.y/-C.z)+dy;
     projectC.x = xC;
     projectC.y = yC;
+
+    // Bepalen van de pixels die tot de 3-hoek A’B’C’ behoren
+    for (int i = round(std::min({projectA.y, projectB.y, projectC.y})+1/2); i <= round(std::max({projectA.y, projectB.y, projectC.y})-1/2); i++) {
+        // TODO
+    }
 
 
 }

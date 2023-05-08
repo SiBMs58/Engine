@@ -72,19 +72,8 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         Lsystem lsystem3D;
         // Maak een Lsystem - 2DLsystem voor drawZbufLines function
         Lsystem2D lsystem;
-        // Define lines
-        Lines2D lines;
+        // Generate figures
         vector<Figure> figures = lsystem3D.generateFigures(configuration);
-        // 1. Triangulatie
-        for (Figure &fig : figures) {
-            vector<Face> triangleFaces;
-            for (Face &face : fig.faces) {
-                vector<Face> triangles = lsystem3D.triangulate(face);
-                triangleFaces.insert(triangleFaces.end(), triangles.begin(), triangles.end());
-            }
-            fig.faces = triangleFaces;
-        }
-        //lines = lsystem3D.doProjection(figures);
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
