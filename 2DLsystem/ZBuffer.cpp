@@ -5,6 +5,8 @@
 #include "ZBuffer.h"
 #include <iostream>
 #include <algorithm>
+#include <limits>
+#include <cmath>
 
 
 ZBuffer::ZBuffer(const int width, const int height) {
@@ -177,7 +179,7 @@ void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vec
 
     // 2. Bepalen van de pixels die tot de 3-hoek A’B’C’ behoren
     // 2.1 y-waardes
-    for (int i = round(std::min({projectA.y, projectB.y, projectC.y})+1/2); i <= round(std::max({projectA.y, projectB.y, projectC.y})-1/2); i++) {
+    for (int i = round(std::min({projectA.y, projectB.y, projectC.y})+0.5); i <= round(std::max({projectA.y, projectB.y, projectC.y})-0.5); i++) {
         double xL = std::numeric_limits<double>::infinity();
         double xR = -std::numeric_limits<double>::infinity();
         calculateXvals(projectA, projectB, i, xL, xR);
