@@ -18,6 +18,7 @@ using Lines2D = vector<Line2D>;
 
 class Lsystem {
 public:
+    void applyDrawFunctions(Figure &figure, const vector<double> vectorColorFigure, const double scale, const double rotateX, const double rotateY, const double rotateZ, const vector<double> vectorCenter, const vector<double> figureColor);
     vector<Figure> generateFigures(const ini::Configuration &configuration);
     void applyTransformation(Figure &fig, const Matrix &m);
     void applyTransformation(Figures3D &figs, const Matrix &m);
@@ -30,6 +31,8 @@ public:
 
     vector<Face> triangulate(const Face& face);
     img::EasyImage drawZbufTriangles(vector<Figure>& figures, const int size, const vector<double> &backgroundColor);
+
+    void generateFractal(Figure& fig, Figures3D& fractal, const int nr_iterations, const double scale);
 
 private:
     stack<Vector3D> positionStack;

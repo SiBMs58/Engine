@@ -6,6 +6,38 @@
 #include "Lsystem.h"
 #include "Wireframe3D.h"
 
+void Lsystem::applyDrawFunctions(Figure &figure, const vector<double> vectorColorFigure, const double scale, const double rotateX, const double rotateY, const double rotateZ, const vector<double> vectorCenter, const vector<double> figureColor) {
+    // Color
+    Color colorFigure;
+
+    colorFigure.red = vectorColorFigure[0] * 255;
+    colorFigure.green = vectorColorFigure[1] * 255;
+    colorFigure.blue = vectorColorFigure[2] * 255;
+
+    figure.color = colorFigure;
+
+    // Schalen
+    Matrix scaleMatrix = figure.scaleFigure(scale);
+    // RotateX
+    Matrix rotateXMatrix = figure.rotateX(rotateX);
+    // RotateT
+    Matrix rotateYMatrix = figure.rotateY(rotateY);
+    // RotateZ
+    Matrix rotateZMatrix = figure.rotateZ(rotateZ);
+    // Translatie over vector
+    Vector3D translatieVector = Vector3D::point(vectorCenter[0], vectorCenter[1], vectorCenter[2]);
+    Matrix translationMatrix = figure.translate(translatieVector);
+
+    Matrix transformationMatrix =
+            scaleMatrix * rotateXMatrix * rotateYMatrix * rotateZMatrix * translationMatrix;
+    applyTransformation(figure, transformationMatrix);
+
+    // Color
+    figure.color.red = figureColor[0] * 255;
+    figure.color.green = figureColor[1] * 255;
+    figure.color.blue = figureColor[2] * 255;
+}
+
 vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration) {
     // Maak een wirefame aan
     Wireframe3D wireframe;
@@ -16,6 +48,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         // Maak een figuur aan
         Figure figure;
         string figureType = configuration["Figure"+to_string(i)]["type"].as_string_or_die();
+        bool fractal = false;
         if (figureType == "Cube"){
             figure = wireframe.createCube();
         } else if (figureType == "3DLSystem"){
@@ -54,8 +87,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double m = configuration["Figure"+to_string(i)]["m"].as_double_or_die();
             double n = configuration["Figure"+to_string(i)]["n"].as_double_or_die();
             figure = wireframe.createTorus(r, R, n ,m);
-        }
-        else if (figureType == "LineDrawing") {
+        } else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
             // Point
@@ -72,44 +104,41 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
                 face.point_indexes = configuration["Figure"+to_string(i)]["line" + to_string(j)].as_int_tuple_or_die();
                 figure.faces.push_back(face);
             }
+        } else if (figureType == "FractalTetrahedron") {
+            Figure tetrahedron = wireframe.createTetrahedron();
+            Figures3D fractalTetrahedron;
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
+            generateFractal(tetrahedron, fractalTetrahedron, nrIterations, fractalScale);
+            figures = fractalTetrahedron;
+            fractal = true;
+        } else if (figureType == "FractalCube") {
+            Figure cube = wireframe.createCube();
+            Figures3D fractalCube;
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
+            generateFractal(cube, fractalCube, nrIterations, fractalScale);
+            figures = fractalCube;
+            fractal = true;
         }
 
-        // Color
-        Color colorFigure;
         vector<double> vectorColorFigure = configuration["Figure"+to_string(i)]["color"].as_double_tuple_or_die();
-        colorFigure.red = vectorColorFigure[0]*255;
-        colorFigure.green = vectorColorFigure[1]*255;
-        colorFigure.blue = vectorColorFigure[2]*255;
-
-        figure.color = colorFigure;
-
-        // Schalen
         double scale = configuration["Figure"+to_string(i)]["scale"].as_double_or_die();
-        Matrix scaleMatrix = figure.scaleFigure(scale);
-        // RotateX
         double rotateX = configuration["Figure"+to_string(i)]["rotateX"].as_double_or_die();
-        Matrix rotateXMatrix = figure.rotateX(rotateX);
-        // RotateT
         double rotateY = configuration["Figure"+to_string(i)]["rotateY"].as_double_or_die();
-        Matrix rotateYMatrix = figure.rotateY(rotateY);
-        // RotateZ
         double rotateZ = configuration["Figure"+to_string(i)]["rotateZ"].as_double_or_die();
-        Matrix rotateZMatrix = figure.rotateZ(rotateZ);
-        // Translatie over vector
         vector<double> vectorCenter = configuration["Figure"+to_string(i)]["center"].as_double_tuple_or_die();
-        Vector3D translatieVector = Vector3D::point(vectorCenter[0], vectorCenter[1], vectorCenter[2]);
-        Matrix translationMatrix = figure.translate(translatieVector);
-
-        Matrix transformationMatrix = scaleMatrix*rotateXMatrix*rotateYMatrix*rotateZMatrix*translationMatrix;
-        applyTransformation(figure, transformationMatrix);
-
-        // Color
         vector<double> figureColor = configuration["Figure"+to_string(i)]["color"].as_double_tuple_or_die();
-        figure.color.red = figureColor[0]*255;
-        figure.color.green = figureColor[1]*255;
-        figure.color.blue = figureColor[2]*255;
 
-        figures.push_back(figure);
+        if (fractal) {
+            for (Figure &figure : figures) {
+                applyDrawFunctions(figure, vectorColorFigure, scale, rotateX, rotateY, rotateZ, vectorCenter, figureColor);
+            }
+        } else {
+            applyDrawFunctions(figure, vectorColorFigure, scale, rotateX, rotateY, rotateZ, vectorCenter, figureColor);
+
+            figures.push_back(figure);
+        }
     }
     vector<double> vectorEye = configuration["General"]["eye"].as_double_tuple_or_die();
     Vector3D eyePoint = Vector3D::point(vectorEye[0], vectorEye[1], vectorEye[2]);
@@ -416,4 +445,61 @@ img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int siz
     }
 
     return image;
+}
+
+void Lsystem::generateFractal(Figure &fig, Figures3D &fractal, const int nr_iterations, double scale) {
+
+    /*
+     *     fractal.emplace_back(figr);
+
+    while (nr_iterations > 0) {
+        Figures3D newFractals;
+        for (Figure fig: fractal) {
+            for (int point = 0; point < fig.points.size(); ++point) {
+
+                Figure fig2 = fig;
+                fig2.applyTransformation(TransMatrix::scaleFigure(1 / scale));
+
+                Vector3D pi = fig.points[point];
+                Vector3D pib = fig2.points[point];
+
+                fig2.applyTransformation(TransMatrix::translate(pi - pib));
+
+                newFractals.emplace_back(fig2);
+            }
+        }
+        fractal = newFractals;
+        nr_iterations--;
+    }
+     */
+
+    fractal.push_back(fig);
+
+    for (int i = 0; i < nr_iterations; ++i) {
+        Figures3D newFractals;
+        for (Figure fig: fractal) {
+            for (int j = 0; j < fig.points.size(); ++j) {
+
+                Figure fig2 = fig;
+                Matrix scaleMatrix = fig2.scaleFigure(1/scale);
+                applyTransformation(fig2, scaleMatrix);
+
+                Vector3D pi = fig.points[j];
+                Vector3D pib = fig2.points[j];
+
+                Matrix transMatrix = fig2.translate(pi - pib);
+                applyTransformation(fig2, transMatrix);
+
+                newFractals.emplace_back(fig2);
+            }
+        }
+        fractal = newFractals;
+        /*// 1. Kopieer de oorspronkelijke figuur
+        Figure copyFig = fig;
+        // 2. Schaal de punten van de nieuwe figuur
+        copyFig.scaleFigure(scale);
+
+        fractal.push_back(copyFig);*/
+    }
+
 }
