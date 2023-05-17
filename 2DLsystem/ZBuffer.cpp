@@ -187,19 +187,19 @@ void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vec
         calculateXvals(projectB, projectC, i, xL, xR);
         // 3. De 1/z waarde voor elke pixel berekenen
         // 3.1 Coördinaten van het zwaartepunt van A’B’C’
-        double xG = (projectA.x+projectB.x+projectC.x)/3;
-        double yG = (projectA.y+projectB.y+projectC.y)/3;
-        double zG = (1/3*A.z)+(1/3*B.z)+(1/3*C.z);
+        double xG = (projectA.x+projectB.x+projectC.x)/3.0;
+        double yG = (projectA.y+projectB.y+projectC.y)/3.0;
+        double zG = (1.0/(3*A.z))+(1.0/(3*B.z))+(1.0/(3*C.z));
         // 3.2 Berekening van dzdx, dzdy
         Vector3D u = B-A;
         Vector3D v = C-A;
-        Vector3D w = Vector3D::vector((u.x*v.z)-(u.z*v.y), (u.z*v.x)-(u.x*v.z), (u.x*v.y)-(u.y*v.x));
+        Vector3D w = Vector3D::cross(u, v);
         double k = (w.x*A.x)+(w.y*A.y)+(w.z*A.z);
         double dzdx = w.x/(-d*k);
         double dzdy = w.y/(-d*k);
         // 3.3 Voor alle pixel (x,y) element van 3-hoek A’B’C’:
-        for (int j = xL; j <= xR; j++) {
-            double z = (1.0001*(1/zG))+((j-xG)*dzdx)+((i-yG)*dzdy);
+        for (int j = xL+0.5; j <= xR-0.5; j++) {
+            double z = (1.0001*(zG))+((j-xG)*dzdx)+((i-yG)*dzdy);
             if (z < zbuffer[j][i]) {
                 image(j, i) = c;
                 zbuffer[j][i] = z;

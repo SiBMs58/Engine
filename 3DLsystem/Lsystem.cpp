@@ -403,18 +403,15 @@ img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int siz
     // Het Z-Buffer algoritme zélf wordt driehoek per driehoek toegepast
     for (Figure &fig : figures) {
         for (int i = 0; i < fig.faces.size(); ++i) {
-            //for (int k = 0; k < fig.faces[i].point_indexes.size()-1; ++k) {
-            int k = 0;
-            int point_index1 = fig.faces[i].point_indexes[k];
-            int point_index2 = fig.faces[i].point_indexes[k+1];
-            int point_index3 = fig.faces[i].point_indexes[k+2];
+            int point_index1 = fig.faces[i].point_indexes[0];
+            int point_index2 = fig.faces[i].point_indexes[1];
+            int point_index3 = fig.faces[i].point_indexes[2];
             Vector3D vectorPoint1 = Vector3D::point(fig.points[point_index1].x, fig.points[point_index1].y, fig.points[point_index1].z);
             Vector3D vectorPoint2 = Vector3D::point(fig.points[point_index2].x, fig.points[point_index2].y, fig.points[point_index2].z);
             Vector3D vectorPoint3 = Vector3D::point(fig.points[point_index3].x, fig.points[point_index3].y, fig.points[point_index3].z);
 
             zbuffer.draw_zbuf_triag(zbuffer, image, vectorPoint1, vectorPoint2, vectorPoint3, d, dx, dy, fig.color);
 
-            //}
         }
     }
 

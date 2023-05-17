@@ -21,7 +21,7 @@ X: Niet werkend of niet geïmplementeerd
 |   | 3D L-systemen            | V      |
 | 4 | Z-buffering (lijnen)     | V      |
 | 5 | Triangulatie             | V      |
-|   | Z-buffering (driehoeken) |        |
+|   | Z-buffering (driehoeken) | V      |
 | 6 | 3D fractalen             |        |
 |   | BuckyBall                |        |
 |   | Mengerspons              |        |
