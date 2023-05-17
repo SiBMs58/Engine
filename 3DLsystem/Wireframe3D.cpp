@@ -566,14 +566,20 @@ Figure Wireframe3D::createCylinder(const int n, const double h) {
     // Maak een figuur aan
     Figure figure;
     // Punten
+    Face topFace;
     for (int i = 0; i < n+1; ++i) {
         Vector3D pointBottom = Vector3D::point(cos((2*i*M_PI)/n), sin((2*i*M_PI)/n), 0);
+        topFace.point_indexes.push_back(i);
         figure.points.push_back(pointBottom);
     }
+    figure.faces.push_back(topFace);
+    Face bottomFace;
     for (int i = 0; i < n+1; ++i) {
         Vector3D pointTop = Vector3D::point(cos((2*i*M_PI)/n), sin((2*i*M_PI)/n), h);
+        bottomFace.point_indexes.push_back(i);
         figure.points.push_back(pointTop);
     }
+    figure.faces.push_back(bottomFace);
     // Faces
     for (int i = 0; i < n; ++i) {
         Face face;
