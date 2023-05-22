@@ -19,7 +19,7 @@ public:
     Figure createSphere(const double radius, const int n);
     Figure createTorus(const double r,const double R, const int n, const int m);
 
-    Figure createBuckeyBall();
+    Figure createBuckyBall();
     Figure createMengerSponge(const int nrIterations);
 };
 

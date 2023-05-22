@@ -690,18 +690,18 @@ Figure Wireframe3D::createTorus(const double r, const double R, const int n, con
     return figure;
 }
 
-Figure Wireframe3D::createBuckeyBall() {
+Figure Wireframe3D::createBuckyBall() {
     // 1. Maak een icosahedron
-    Figure buckeyBall = createIcosahedron();
+    Figure buckyBall = createIcosahedron();
 
     // 2. Je kan de buckyball construeren door elk van de 20 driehoeken van de icosahedron op te delen in een gelijkzijdige zeshoek en drie driehoeken.
     vector<Vector3D> newPoints;
     vector<Face> newFaces;
-    for (Face& face : buckeyBall.faces) {
+    for (Face& face : buckyBall.faces) {
         Face currentFace = face;
         for (int i = 0; i < 3; ++i) {
-            newPoints.push_back(buckeyBall.points[currentFace.point_indexes[i % 3]] + (1.0 / 3) * (buckeyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckeyBall.points[currentFace.point_indexes[i % 3]])));
-            newPoints.push_back(buckeyBall.points[currentFace.point_indexes[i % 3]] + (2.0 / 3) * (buckeyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckeyBall.points[currentFace.point_indexes[i % 3]])));
+            newPoints.push_back(buckyBall.points[currentFace.point_indexes[i % 3]] + (1.0 / 3) * (buckyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckyBall.points[currentFace.point_indexes[i % 3]])));
+            newPoints.push_back(buckyBall.points[currentFace.point_indexes[i % 3]] + (2.0 / 3) * (buckyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckyBall.points[currentFace.point_indexes[i % 3]])));
         }
 
         Face newFace; // Creëert point indexes e.g. 1, 2, 3, 4, 5, 6
@@ -710,8 +710,8 @@ Figure Wireframe3D::createBuckeyBall() {
         }
         newFaces.push_back(newFace);
     }
-    buckeyBall.points = newPoints;
-    buckeyBall.faces = newFaces;
+    buckyBall.points = newPoints;
+    buckyBall.faces = newFaces;
 
     // 3. Er on staan hierdoor piramides met vijf zijdes
     Face vijfhoek1;
@@ -738,27 +738,27 @@ Figure Wireframe3D::createBuckeyBall() {
     vijfhoek11.point_indexes = {110, 87, 81, 77, 76};
     Face vijfhoek12;
     vijfhoek12.point_indexes = {96, 109, 103, 108, 91};
-    buckeyBall.faces.push_back(vijfhoek1);
-    buckeyBall.faces.push_back(vijfhoek2);
-    buckeyBall.faces.push_back(vijfhoek3);
-    buckeyBall.faces.push_back(vijfhoek4);
-    buckeyBall.faces.push_back(vijfhoek5);
-    buckeyBall.faces.push_back(vijfhoek6);
-    buckeyBall.faces.push_back(vijfhoek7);
-    buckeyBall.faces.push_back(vijfhoek8);
-    buckeyBall.faces.push_back(vijfhoek9);
-    buckeyBall.faces.push_back(vijfhoek10);
-    buckeyBall.faces.push_back(vijfhoek11);
-    buckeyBall.faces.push_back(vijfhoek12);
+    buckyBall.faces.push_back(vijfhoek1);
+    buckyBall.faces.push_back(vijfhoek2);
+    buckyBall.faces.push_back(vijfhoek3);
+    buckyBall.faces.push_back(vijfhoek4);
+    buckyBall.faces.push_back(vijfhoek5);
+    buckyBall.faces.push_back(vijfhoek6);
+    buckyBall.faces.push_back(vijfhoek7);
+    buckyBall.faces.push_back(vijfhoek8);
+    buckyBall.faces.push_back(vijfhoek9);
+    buckyBall.faces.push_back(vijfhoek10);
+    buckyBall.faces.push_back(vijfhoek11);
+    buckyBall.faces.push_back(vijfhoek12);
 
     // 4. Fix bug indexering starts with 0
-    for (Face& faceBuckeyBall : buckeyBall.faces){
-        for (int& pointIndexes : faceBuckeyBall.point_indexes) {
+    for (Face& faceBuckyBall : buckyBall.faces){
+        for (int& pointIndexes : faceBuckyBall.point_indexes) {
             pointIndexes--;
         }
     }
 
-    return buckeyBall;
+    return buckyBall;
 }
 
 Figure Wireframe3D::createMengerSponge(const int n) {

@@ -90,7 +90,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             figure = wireframe.createTorus(r, R, n ,m);
             figure.color = colorFigure;
         } else if (figureType == "BuckyBall") {
-            figure = wireframe.createBuckeyBall();
+            figure = wireframe.createBuckyBall();
             figure.color = colorFigure;
         } else if (figureType == "MengerSponge") {
             int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
@@ -171,7 +171,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             }
             fractal = true;
         } else if (figureType == "FractalBuckyBall") {
-            Figure buckyBall = wireframe.createBuckeyBall();
+            Figure buckyBall = wireframe.createBuckyBall();
             Figures3D fractalBuckyBall;
             int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
