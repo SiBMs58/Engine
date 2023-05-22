@@ -87,6 +87,8 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double m = configuration["Figure"+to_string(i)]["m"].as_double_or_die();
             double n = configuration["Figure"+to_string(i)]["n"].as_double_or_die();
             figure = wireframe.createTorus(r, R, n ,m);
+        } else if (figureType == "BuckyBall") {
+            figure = wireframe.createBuckeyBall();
         } else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
@@ -119,6 +121,38 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
             generateFractal(cube, fractalCube, nrIterations, fractalScale);
             figures = fractalCube;
+            fractal = true;
+        } else if (figureType == "FractalIcosahedron") {
+            Figure icosahedron = wireframe.createIcosahedron();
+            Figures3D fractalIcosahedron;
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
+            generateFractal(icosahedron, fractalIcosahedron, nrIterations, fractalScale);
+            figures = fractalIcosahedron;
+            fractal = true;
+        } else if (figureType == "FractalOctahedron") {
+            Figure octahedron = wireframe.createOctahedron();
+            Figures3D fractalOctahedron;
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
+            generateFractal(octahedron, fractalOctahedron, nrIterations, fractalScale);
+            figures = fractalOctahedron;
+            fractal = true;
+        } else if (figureType == "FractalDodecahedron") {
+            Figure dodecahedron = wireframe.createDodecahedron();
+            Figures3D fractalDodecahedron;
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
+            generateFractal(dodecahedron, fractalDodecahedron, nrIterations, fractalScale);
+            figures = fractalDodecahedron;
+            fractal = true;
+        } else if (figureType == "FractalBuckyBall") {
+            Figure buckyBall = wireframe.createBuckeyBall();
+            Figures3D fractalBuckyBall;
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            int fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_int_or_die();
+            generateFractal(buckyBall, fractalBuckyBall, nrIterations, fractalScale);
+            figures = fractalBuckyBall;
             fractal = true;
         }
 

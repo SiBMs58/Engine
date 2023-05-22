@@ -689,3 +689,74 @@ Figure Wireframe3D::createTorus(const double r, const double R, const int n, con
     figure.faces.pop_back();
     return figure;
 }
+
+Figure Wireframe3D::createBuckeyBall() {
+    Figure buckeyBall = createIcosahedron();
+
+    vector<Vector3D> newPoints;
+    vector<Face> newFaces;
+
+    for (Face& face : buckeyBall.faces) {
+        Face currentFace = face;
+        for (int i = 0; i < 3; ++i) {
+            newPoints.push_back(buckeyBall.points[currentFace.point_indexes[i % 3]] + (1.0 / 3) * (buckeyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckeyBall.points[currentFace.point_indexes[i % 3]])));
+            newPoints.push_back(buckeyBall.points[currentFace.point_indexes[i % 3]] + (2.0 / 3) * (buckeyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckeyBall.points[currentFace.point_indexes[i % 3]])));
+        }
+
+        Face newFace; // Creëert point indexes e.g. 1, 2, 3, 4, 5, 6
+        for (int i = 0; i < 6; ++i) {
+            newFace.point_indexes.push_back(newPoints.size() - i);
+        }
+        newFaces.push_back(newFace);
+    }
+    buckeyBall.points = newPoints;
+    buckeyBall.faces = newFaces;
+
+    // De vijfhoeken
+    Face vijfhoek1;
+    vijfhoek1.point_indexes = {1, 6, 12, 18, 24};
+    Face vijfhoek2;
+    vijfhoek2.point_indexes = {28, 82, 31, 3, 2};
+    Face vijfhoek3;
+    vijfhoek3.point_indexes = {9, 5, 4, 34, 42};
+    Face vijfhoek4;
+    vijfhoek4.point_indexes = {10, 46, 54, 15, 11};
+    Face vijfhoek5;
+    vijfhoek5.point_indexes = {17, 16, 58, 66, 21};
+    Face vijfhoek6;
+    vijfhoek6.point_indexes = {78, 27, 23, 22, 70};
+    Face vijfhoek7;
+    vijfhoek7.point_indexes = {33, 32, 117, 95, 39};
+    Face vijfhoek8;
+    vijfhoek8.point_indexes = {41, 40, 92, 51, 45};
+    Face vijfhoek9;
+    vijfhoek9.point_indexes = {53, 52, 107, 63, 57};
+    Face vijfhoek10;
+    vijfhoek10.point_indexes = {69, 65, 64, 104, 75};
+    Face vijfhoek11;
+    vijfhoek11.point_indexes = {110, 87, 81, 77, 76};
+    Face vijfhoek12;
+    vijfhoek12.point_indexes = {96, 109, 103, 108, 91};
+
+    buckeyBall.faces.push_back(vijfhoek1);
+    buckeyBall.faces.push_back(vijfhoek2);
+    buckeyBall.faces.push_back(vijfhoek3);
+    buckeyBall.faces.push_back(vijfhoek4);
+    buckeyBall.faces.push_back(vijfhoek5);
+    buckeyBall.faces.push_back(vijfhoek6);
+    buckeyBall.faces.push_back(vijfhoek7);
+    buckeyBall.faces.push_back(vijfhoek8);
+    buckeyBall.faces.push_back(vijfhoek9);
+    buckeyBall.faces.push_back(vijfhoek10);
+    buckeyBall.faces.push_back(vijfhoek11);
+    buckeyBall.faces.push_back(vijfhoek12);
+
+
+    for (Face& faceBuckeyBall : buckeyBall.faces){
+        for (int& pointIndexes : faceBuckeyBall.point_indexes) {
+            pointIndexes--;
+        }
+    }
+
+    return buckeyBall;
+}
