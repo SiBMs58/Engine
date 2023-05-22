@@ -10,7 +10,7 @@ X: Niet werkend of niet geïmplementeerd
 |---|--------------------------|--------|
 | 1 | 2D L-systemen            | V      |
 |   | Met haakjes              | V      |
-|   | Stochastisch             | V      |
+|   | Stochastisch             | ?      |
 | 2 | Transformaties           | V      |
 |   | Eye-point                | V      |
 |   | Projectie                | V      |
@@ -22,10 +22,10 @@ X: Niet werkend of niet geïmplementeerd
 | 4 | Z-buffering (lijnen)     | V      |
 | 5 | Triangulatie             | V      |
 |   | Z-buffering (driehoeken) | V      |
-| 6 | 3D fractalen             |        |
-|   | BuckyBall                |        |
-|   | Mengerspons              |        |
-|   | View Frustum             |        |
+| 6 | 3D fractalen             | V      |
+|   | BuckyBall                | V      |
+|   | Mengerspons              | V      |
+|   | View Frustum             | X      |
 | 7 | Ambient licht            |        |
 |   | Diffuus licht (oneindig) |        |
 |   | Diffuus licht (puntbron) |        |

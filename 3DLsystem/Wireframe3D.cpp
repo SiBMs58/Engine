@@ -751,7 +751,6 @@ Figure Wireframe3D::createBuckeyBall() {
     buckeyBall.faces.push_back(vijfhoek11);
     buckeyBall.faces.push_back(vijfhoek12);
 
-
     for (Face& faceBuckeyBall : buckeyBall.faces){
         for (int& pointIndexes : faceBuckeyBall.point_indexes) {
             pointIndexes--;
@@ -759,4 +758,12 @@ Figure Wireframe3D::createBuckeyBall() {
     }
 
     return buckeyBall;
+}
+
+Figure Wireframe3D::createMengerSponge(const int n) {
+    Figure mengerSponge;
+    for (int i = 0; i <= n; ++i) {
+        mengerSponge = createCube();
+    }
+    return mengerSponge;
 }

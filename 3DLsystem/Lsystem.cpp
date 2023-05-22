@@ -89,6 +89,9 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             figure = wireframe.createTorus(r, R, n ,m);
         } else if (figureType == "BuckyBall") {
             figure = wireframe.createBuckeyBall();
+        } else if (figureType == "MengerSponge") {
+            int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
+            figure = wireframe.createMengerSponge(nrIterations);
         } else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
