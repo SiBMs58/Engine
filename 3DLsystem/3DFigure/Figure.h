@@ -17,7 +17,12 @@ class Figure {
 public:
     vector<Vector3D> points;
     vector<Face> faces;
-    Color color;
+    //Color color;
+    Color ambientReflection;
+    Color diffuseReflection;
+    Color specularReflection;
+    double reflectionCoefficient;
+
 
     Matrix scaleFigure(const double);
     Matrix rotateX(const double);

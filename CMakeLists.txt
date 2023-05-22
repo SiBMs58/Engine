@@ -16,7 +16,7 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OWN_GXX_FLAGS}")
 ############################################################
 set(engine_sources easy_image.cc engine.cc ini_configuration.cc l_parser.cc vector3d.cc
         2DLsystem/2DLine/Color.cpp 2DLsystem/2DLine/Point2D.cpp 2DLsystem/2DLine/Line2D.cpp 2DLsystem/Lsystem2D.cpp 2DLsystem/ZBuffer.cpp
-        3DLsystem/3DFigure/Figure.cpp 3DLsystem/3DFigure/Face.cpp 3DLsystem/Lsystem.cpp 3DLsystem/Wireframe3D.cpp)
+        3DLsystem/3DFigure/Figure.cpp 3DLsystem/3DFigure/Face.cpp 3DLsystem/Lsystem.cpp 3DLsystem/Wireframe3D.cpp 3DLsystem/3DFigure/Light.cpp)
 
 ############################################################
 # Create an executable
