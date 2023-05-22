@@ -691,11 +691,12 @@ Figure Wireframe3D::createTorus(const double r, const double R, const int n, con
 }
 
 Figure Wireframe3D::createBuckeyBall() {
+    // 1. Maak een icosahedron
     Figure buckeyBall = createIcosahedron();
 
+    // 2. Je kan de buckyball construeren door elk van de 20 driehoeken van de icosahedron op te delen in een gelijkzijdige zeshoek en drie driehoeken.
     vector<Vector3D> newPoints;
     vector<Face> newFaces;
-
     for (Face& face : buckeyBall.faces) {
         Face currentFace = face;
         for (int i = 0; i < 3; ++i) {
@@ -712,7 +713,7 @@ Figure Wireframe3D::createBuckeyBall() {
     buckeyBall.points = newPoints;
     buckeyBall.faces = newFaces;
 
-    // De vijfhoeken
+    // 3. Er on staan hierdoor piramides met vijf zijdes
     Face vijfhoek1;
     vijfhoek1.point_indexes = {1, 6, 12, 18, 24};
     Face vijfhoek2;
@@ -737,7 +738,6 @@ Figure Wireframe3D::createBuckeyBall() {
     vijfhoek11.point_indexes = {110, 87, 81, 77, 76};
     Face vijfhoek12;
     vijfhoek12.point_indexes = {96, 109, 103, 108, 91};
-
     buckeyBall.faces.push_back(vijfhoek1);
     buckeyBall.faces.push_back(vijfhoek2);
     buckeyBall.faces.push_back(vijfhoek3);
@@ -751,6 +751,7 @@ Figure Wireframe3D::createBuckeyBall() {
     buckeyBall.faces.push_back(vijfhoek11);
     buckeyBall.faces.push_back(vijfhoek12);
 
+    // 4. Fix bug indexering starts with 0
     for (Face& faceBuckeyBall : buckeyBall.faces){
         for (int& pointIndexes : faceBuckeyBall.point_indexes) {
             pointIndexes--;
@@ -761,9 +762,64 @@ Figure Wireframe3D::createBuckeyBall() {
 }
 
 Figure Wireframe3D::createMengerSponge(const int n) {
+    if (n <= 0) {
+        return createCube();
+    }
+
+    // 1. Begin met een kubus
+    vector<Vector3D> cube;
+    // 2. Verdeel elk vlak van de kubus in negen vierkanten, zoals Rubik's Cube. Dit verdeelt de kubus in 27 kleinere kubussen.
+    cube.push_back(Vector3D::point(1, -1, -1)); // 1
+    cube.push_back(Vector3D::point(-1, 1, -1)); // 2
+    cube.push_back(Vector3D::point(1, 1, 1)); // 3
+    cube.push_back(Vector3D::point(-1, -1, 1)); // 4
+    cube.push_back(Vector3D::point(1, 1, -1)); // 5
+    cube.push_back(Vector3D::point(-1, -1, -1)); // 6
+    cube.push_back(Vector3D::point(1, -1, 1)); // 7
+    cube.push_back(Vector3D::point(-1, 1, 1)); // 8
+    cube.push_back(Vector3D::point(1, 0, -1));
+    cube.push_back(Vector3D::point(-1, 0, -1));
+    cube.push_back(Vector3D::point(1, 0, 1));
+    cube.push_back(Vector3D::point(-1, 0, 1));
+    cube.push_back(Vector3D::point(0, 1, -1));
+    cube.push_back(Vector3D::point(0, -1, -1));
+    cube.push_back(Vector3D::point(0, 1, 1));
+    cube.push_back(Vector3D::point(0, -1, 1));
+    cube.push_back(Vector3D::point(-1, -1, 0));
+    cube.push_back(Vector3D::point(1, -1, 0));
+    cube.push_back(Vector3D::point(1, 1, 0));
+    cube.push_back(Vector3D::point(-1, 1, 0));
+
+    // 3. Verwijder de kleinere kubus in het midden van elk vlak en verwijder de kleinere kubus in het midden van de meer gigantische kubus, waardoor er 20 kleinere kubussen overblijven.
+    vector<Figure> sponge;
+    for (int j = 0; j < cube.size(); ++j) {
+        Figure fig = createMengerSponge(n-1);
+        Matrix scaleMatrix = fig.scaleFigure(1.0 / 3);
+        for (int i = 0; i < fig.points.size(); ++i) {
+            fig.points[i] = fig.points[i]*scaleMatrix;
+        }
+        Matrix translateMatrix = fig.translate(Vector3D::vector((2.0/ 3) * (cube[j].x), (2.0/ 3) * (cube[j].y), (2.0/ 3) * (cube[j].z)));
+        for (int i = 0; i < fig.points.size(); ++i) {
+            fig.points[i] = fig.points[i]*translateMatrix;
+        }
+        sponge.push_back(fig);
+    }
+
     Figure mengerSponge;
-    for (int i = 0; i <= n; ++i) {
-        mengerSponge = createCube();
+    // 4. Merge als het ware de mengerSpons met de sponge
+    for (int j = 0; j < sponge.size(); ++j) {
+        int pointSize = mengerSponge.points.size();
+        // 4.1. Voeg de punten van de sponge toe aan de mengerSponge
+        for(Vector3D& point: sponge[j].points){
+            mengerSponge.points.push_back(point);
+        }
+        // 4.2. Voeg nu ook extra faces toe
+        for(Face& face: sponge[j].faces){
+            for(int &point: face.point_indexes){
+                point += pointSize;
+            }
+            mengerSponge.faces.push_back(face);
+        }
     }
     return mengerSponge;
 }

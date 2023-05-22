@@ -18,7 +18,7 @@ using Lines2D = vector<Line2D>;
 
 class Lsystem {
 public:
-    void applyDrawFunctions(Figure &figure, const vector<double> vectorColorFigure, const double scale, const double rotateX, const double rotateY, const double rotateZ, const vector<double> vectorCenter, const vector<double> figureColor);
+    void applyDrawFunctions(Figure &figure, const double scale, const double rotateX, const double rotateY, const double rotateZ, const vector<double> vectorCenter);
     vector<Figure> generateFigures(const ini::Configuration &configuration);
     void applyTransformation(Figure &fig, const Matrix &m);
     void applyTransformation(Figures3D &figs, const Matrix &m);
