@@ -15,3 +15,8 @@ Light::Light(const vector<double> &ambient, const vector<double> &diffuse, const
     specularLight.green = specular[1];
     specularLight.blue = specular[2];
 }
+
+InfLight::InfLight(const vector<double> &ambientLight, const vector<double> &diffuseLight,
+                   const vector<double> &specularLight, const Vector3D &ldVector) : Light(ambientLight, diffuseLight,
+                                                                                          specularLight),
+                                                                                    ldVector(ldVector) {}

@@ -177,8 +177,8 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
             figures.push_back(figure);
         }
 
-        if (lighted) {
-            for (int j = figuresStartSize; j < figures.size(); ++j) {
+        for (int j = figuresStartSize; j < figures.size(); ++j) {
+            if (lighted) {
                 // Ambient reflection
                 vector<double> vectorFigureColor = configuration["Figure"+to_string(i)]["ambientReflection"].as_double_tuple_or_default({0,0,0});
                 Color ambientReflection;
@@ -203,14 +203,14 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
                 // Reflection Coefficient
                 double reflectionCoefficient = configuration["Figure"+to_string(i)]["reflectionCoefficient"].as_double_or_default(0.0);
                 figures[j].reflectionCoefficient = reflectionCoefficient;
+            } else {
+                vector<double> vectorFigureColor = configuration["Figure"+to_string(i)]["color"].as_double_tuple_or_die();
+                Color colorFigure;
+                colorFigure.red = vectorFigureColor[0] * 255;
+                colorFigure.green = vectorFigureColor[1] * 255;
+                colorFigure.blue = vectorFigureColor[2] * 255;
+                figures[j].ambientReflection = colorFigure;
             }
-        } else {
-            vector<double> vectorFigureColor = configuration["Figure"+to_string(i)]["color"].as_double_tuple_or_die();
-            Color colorFigure;
-            colorFigure.red = vectorFigureColor[0] * 255;
-            colorFigure.green = vectorFigureColor[1] * 255;
-            colorFigure.blue = vectorFigureColor[2] * 255;
-            figure.ambientReflection = colorFigure;
         }
     }
 
@@ -222,12 +222,22 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
     if (lighted) {
         int nrLights = configuration["General"]["nrLights"].as_int_or_default(0);
         for (int i = 0; i < nrLights; ++i) {
-            vector<double> ambient = configuration["Light"+std::to_string(i)]["ambientLight"].as_double_tuple_or_default({0, 0, 0});
-            vector<double> diffuse = configuration["Light"+std::to_string(i)]["diffuseLight"].as_double_tuple_or_default({0, 0, 0});
-            vector<double> specular = configuration["Light"+std::to_string(i)]["specularLight"].as_double_tuple_or_default({0, 0, 0});
+            vector<double> ambient = configuration["Light"+to_string(i)]["ambientLight"].as_double_tuple_or_default({0, 0, 0});
+            vector<double> diffuse = configuration["Light"+to_string(i)]["diffuseLight"].as_double_tuple_or_default({0, 0, 0});
+            vector<double> specular = configuration["Light"+to_string(i)]["specularLight"].as_double_tuple_or_default({0, 0, 0});
 
-            Light light = Light(ambient, diffuse, specular);
-            lights.push_back(light);
+            // Diffuse
+            if (configuration["Light"+to_string(i)]["infinity"].as_bool_or_default(false)) {
+                vector<double> direction = configuration["Light"+to_string(i)]["direction"].as_double_tuple_or_default({0, 0, 0});
+                Vector3D ld = Vector3D::vector(direction[0], direction[1], direction[2]);
+                ld *= eyePointTransformationMatrix;
+                Vector3D ldNormalized = -Vector3D::normalise(ld);
+                InfLight infLight = InfLight(ambient, diffuse, specular, ldNormalized);
+                lights.push_back(infLight);
+            } else {
+                Light light = Light(ambient, diffuse, specular);
+                lights.push_back(light);
+            }
         }
     } else {
         vector<double> ambient = configuration["General"]["color"].as_double_tuple_or_default({0, 0, 0});

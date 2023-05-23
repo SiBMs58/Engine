@@ -158,8 +158,22 @@ void calculateXvals(const Point2D &p, const Point2D &q, const double y, double &
 void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vector3D &A, const Vector3D &B, const Vector3D &C,
                               double d, double dx, double dy, Color ambientReflection, Color diffuseReflection, Color specularReflection, double reflectionCoefficient, Lights3D& lights) {
 
-    img::Color c = img::Color(ambientReflection.red, ambientReflection.green, ambientReflection.blue);
+    // Berekenen van de normaalvector (mbv de eyepoint getransformeerde coordinaten A, B, C)
+    Vector3D AB = Vector3D::normalise(B - A);
+    Vector3D AC = Vector3D::normalise(C - A);
+    Vector3D normaalVector = Vector3D::cross(AB, AC);
+    normaalVector = Vector3D::normalise(normaalVector);
 
+    bool reflection = false;
+    bool pointLight = false;
+
+    // Calculate the color
+    img::Color color(0, 0, 0);
+    for (Light &light: lights) {
+        color.red = color.red + ambientReflection.red * light.ambientLight.red;
+        color.green = color.green + ambientReflection.green * light.ambientLight.green;
+        color.blue = color.blue + ambientReflection.blue * light.ambientLight.blue;
+    }
     // 1. Projectie van de driehoek
     Point2D projectA;
     double xA = (d*A.x/-A.z)+dx;
@@ -201,7 +215,7 @@ void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vec
         for (int j = xL+0.5; j <= xR-0.5; j++) {
             double z = (1.0001*(zG))+((j-xG)*dzdx)+((i-yG)*dzdy);
             if (z < zbuffer[j][i]) {
-                image(j, i) = c;
+                image(j, i) = color;
                 zbuffer[j][i] = z;
             }
         }

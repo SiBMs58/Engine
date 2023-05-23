@@ -26,6 +26,9 @@ public:
 class InfLight: public Light
 {
 public:
+    InfLight(const vector<double> &ambientLight, const vector<double> &diffuseLight,
+             const vector<double> &specularLight, const Vector3D &ldVector);
+
     //de richting waarin het
     //licht schijnt
     Vector3D ldVector;
