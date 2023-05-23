@@ -164,11 +164,7 @@ void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vec
     Vector3D normaalVector = Vector3D::cross(AB, AC);
     normaalVector = Vector3D::normalise(normaalVector);
 
-    bool reflection = false;
-    bool pointLight = false;
-
-    // Calculate the color
-    img::Color color(0, 0, 0);
+    img::Color color = img::Color(0, 0, 0);
     for (Light &light: lights) {
         color.red = color.red + ambientReflection.red * light.ambientLight.red;
         color.green = color.green + ambientReflection.green * light.ambientLight.green;
