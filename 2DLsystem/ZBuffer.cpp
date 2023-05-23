@@ -156,9 +156,9 @@ void calculateXvals(const Point2D &p, const Point2D &q, const double y, double &
 }
 
 void ZBuffer::draw_zbuf_triag(ZBuffer &zbuffer, img::EasyImage &image, const Vector3D &A, const Vector3D &B, const Vector3D &C,
-                              double d, double dx, double dy, Color color) {
+                              double d, double dx, double dy, Color ambientReflection, Color diffuseReflection, Color specularReflection, double reflectionCoefficient, Lights3D& lights) {
 
-    img::Color c = img::Color(color.red, color.green, color.blue);
+    img::Color c = img::Color(ambientReflection.red, ambientReflection.green, ambientReflection.blue);
 
     // 1. Projectie van de driehoek
     Point2D projectA;

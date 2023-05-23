@@ -25,10 +25,15 @@ void Lsystem::applyDrawFunctions(Figure &figure, const double scale, const doubl
 
 }
 
-vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration) {
+vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration, Lights3D &lights) {
     // Maak een wirefame aan
     Wireframe3D wireframe;
     int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
+    string type = configuration["General"]["type"].as_string_or_die();
+    bool lighted = false;
+    if (type == "LightedZBuffering") {
+        lighted = true;
+    }
     // Maak figures aan
     vector<Figure> figures;
     for (int i = 0; i < nrFigures; ++i) {
@@ -36,14 +41,9 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         Figure figure;
         string figureType = configuration["Figure"+to_string(i)]["type"].as_string_or_die();
         bool fractal = false;
-        vector<double> vectorFigureColor = configuration["Figure"+to_string(i)]["color"].as_double_tuple_or_die();
-        Color colorFigure;
-        colorFigure.red = vectorFigureColor[0] * 255;
-        colorFigure.green = vectorFigureColor[1] * 255;
-        colorFigure.blue = vectorFigureColor[2] * 255;
+        int figuresStartSize = figures.size();
         if (figureType == "Cube"){
             figure = wireframe.createCube();
-            figure.color = colorFigure;
         } else if (figureType == "3DLSystem"){
             // Maak een parser aan
             LParser::LSystem3D LParser3D;
@@ -54,48 +54,37 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             // Steek in LParser
             file >> LParser3D;
             figure = drawLSystem(LParser3D);
-            figure.color = colorFigure;
         }
         else if (figureType == "Tetrahedron") {
             figure = wireframe.createTetrahedron();
-            figure.color = colorFigure;
         } else if (figureType == "Icosahedron"){
             figure = wireframe.createIcosahedron();
-            figure.color = colorFigure;
         } else if (figureType == "Octahedron"){
             figure = wireframe.createOctahedron();
-            figure.color = colorFigure;
         } else if (figureType == "Dodecahedron"){
             figure = wireframe.createDodecahedron();
-            figure.color = colorFigure;
         } else if (figureType == "Cone") {
             int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
             double height = configuration["Figure"+to_string(i)]["height"].as_double_or_die();
             figure = wireframe.createCone(n, height);
-            figure.color = colorFigure;
         } else if (figureType == "Cylinder"){
             int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
             double height = configuration["Figure"+to_string(i)]["height"].as_double_or_die();
             figure = wireframe.createCylinder(n, height);
-            figure.color = colorFigure;
         } else if (figureType == "Sphere"){
             int n = configuration["Figure"+to_string(i)]["n"].as_int_or_die();
             figure = wireframe.createSphere(1 ,n);
-            figure.color = colorFigure;
         } else if (figureType == "Torus"){
             double r = configuration["Figure"+to_string(i)]["r"].as_double_or_die();
             double R = configuration["Figure"+to_string(i)]["R"].as_double_or_die();
             double m = configuration["Figure"+to_string(i)]["m"].as_double_or_die();
             double n = configuration["Figure"+to_string(i)]["n"].as_double_or_die();
             figure = wireframe.createTorus(r, R, n ,m);
-            figure.color = colorFigure;
         } else if (figureType == "BuckyBall") {
             figure = wireframe.createBuckyBall();
-            figure.color = colorFigure;
         } else if (figureType == "MengerSponge") {
             int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
             figure = wireframe.createMengerSponge(nrIterations);
-            figure.color = colorFigure;
         } else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
@@ -113,7 +102,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
                 face.point_indexes = configuration["Figure"+to_string(i)]["line" + to_string(j)].as_int_tuple_or_die();
                 figure.faces.push_back(face);
             }
-            figure.color = colorFigure;
         } else if (figureType == "FractalTetrahedron") {
             Figure tetrahedron = wireframe.createTetrahedron();
             Figures3D fractalTetrahedron;
@@ -121,7 +109,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
             generateFractal(tetrahedron, fractalTetrahedron, nrIterations, fractalScale);
             for (int j = 0; j < fractalTetrahedron.size(); ++j) {
-                fractalTetrahedron[j].color = colorFigure;
                 figures.push_back(fractalTetrahedron[j]);
             }
             fractal = true;
@@ -132,7 +119,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
             generateFractal(cube, fractalCube, nrIterations, fractalScale);
             for (int j = 0; j < fractalCube.size(); ++j) {
-                fractalCube[j].color = colorFigure;
                 figures.push_back(fractalCube[j]);
             }
             fractal = true;
@@ -143,7 +129,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
             generateFractal(icosahedron, fractalIcosahedron, nrIterations, fractalScale);
             for (int j = 0; j < fractalIcosahedron.size(); ++j) {
-                fractalIcosahedron[j].color = colorFigure;
                 figures.push_back(fractalIcosahedron[j]);
             }
             fractal = true;
@@ -154,7 +139,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
             generateFractal(octahedron, fractalOctahedron, nrIterations, fractalScale);
             for (int j = 0; j < fractalOctahedron.size(); ++j) {
-                fractalOctahedron[j].color = colorFigure;
                 figures.push_back(fractalOctahedron[j]);
 
             }
@@ -166,7 +150,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
             generateFractal(dodecahedron, fractalDodecahedron, nrIterations, fractalScale);
             for (int j = 0; j < fractalDodecahedron.size(); ++j) {
-                fractalDodecahedron[j].color = colorFigure;
                 figures.push_back(fractalDodecahedron[j]);
             }
             fractal = true;
@@ -177,7 +160,6 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
             double fractalScale = configuration["Figure"+to_string(i)]["fractalScale"].as_double_or_die();
             generateFractal(buckyBall, fractalBuckyBall, nrIterations, fractalScale);
             for (int j = 0; j < fractalBuckyBall.size(); ++j) {
-                fractalBuckyBall[j].color = colorFigure;
                 figures.push_back(fractalBuckyBall[j]);
             }
             fractal = true;
@@ -189,14 +171,46 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
         double rotateZ = configuration["Figure"+to_string(i)]["rotateZ"].as_double_or_die();
         vector<double> vectorCenter = configuration["Figure"+to_string(i)]["center"].as_double_tuple_or_die();
 
-        if (fractal) {
-            for (Figure &figure : figures) {
-                applyDrawFunctions(figure, scale, rotateX, rotateY, rotateZ, vectorCenter);
+        applyDrawFunctions(figure, scale, rotateX, rotateY, rotateZ, vectorCenter);
+
+        if (!fractal) {
+            figures.push_back(figure);
+        }
+
+        if (lighted) {
+            for (int j = figuresStartSize; j < figures.size(); ++j) {
+                // Ambient reflection
+                vector<double> vectorFigureColor = configuration["Figure"+to_string(i)]["ambientReflection"].as_double_tuple_or_default({0,0,0});
+                Color ambientReflection;
+                ambientReflection.red = vectorFigureColor[0] * 255;
+                ambientReflection.green = vectorFigureColor[1] * 255;
+                ambientReflection.blue = vectorFigureColor[2] * 255;
+                figures[j].ambientReflection = ambientReflection;
+                // Diffuse reflection
+                vectorFigureColor = configuration["Figure"+to_string(i)]["diffuseReflection"].as_double_tuple_or_default({0,0,0});
+                Color diffuseReflection;
+                diffuseReflection.red = vectorFigureColor[0] * 255;
+                diffuseReflection.green = vectorFigureColor[1] * 255;
+                diffuseReflection.blue = vectorFigureColor[2] * 255;
+                figures[j].diffuseReflection = diffuseReflection;
+                // Specular reflection
+                vectorFigureColor = configuration["Figure"+to_string(i)]["specularReflection"].as_double_tuple_or_default({0,0,0});
+                Color specularReflection;
+                specularReflection.red = vectorFigureColor[0] * 255;
+                specularReflection.green = vectorFigureColor[1] * 255;
+                specularReflection.blue = vectorFigureColor[2] * 255;
+                figures[j].specularReflection = specularReflection;
+                // Reflection Coefficient
+                double reflectionCoefficient = configuration["Figure"+to_string(i)]["reflectionCoefficient"].as_double_or_default(0.0);
+                figures[j].reflectionCoefficient = reflectionCoefficient;
             }
         } else {
-            applyDrawFunctions(figure, scale, rotateX, rotateY, rotateZ, vectorCenter);
-
-            figures.push_back(figure);
+            vector<double> vectorFigureColor = configuration["Figure"+to_string(i)]["color"].as_double_tuple_or_die();
+            Color colorFigure;
+            colorFigure.red = vectorFigureColor[0] * 255;
+            colorFigure.green = vectorFigureColor[1] * 255;
+            colorFigure.blue = vectorFigureColor[2] * 255;
+            figure.ambientReflection = colorFigure;
         }
     }
 
@@ -204,6 +218,25 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration)
     Vector3D eyePoint = Vector3D::point(vectorEye[0], vectorEye[1], vectorEye[2]);
     Matrix eyePointTransformationMatrix = eyePointTrans(eyePoint);
     applyTransformation(figures, eyePointTransformationMatrix);
+
+    if (lighted) {
+        int nrLights = configuration["General"]["nrLights"].as_int_or_default(0);
+        for (int i = 0; i < nrLights; ++i) {
+            vector<double> ambient = configuration["Light"+std::to_string(i)]["ambientLight"].as_double_tuple_or_default({0, 0, 0});
+            vector<double> diffuse = configuration["Light"+std::to_string(i)]["diffuseLight"].as_double_tuple_or_default({0, 0, 0});
+            vector<double> specular = configuration["Light"+std::to_string(i)]["specularLight"].as_double_tuple_or_default({0, 0, 0});
+
+            Light light = Light(ambient, diffuse, specular);
+            lights.push_back(light);
+        }
+    } else {
+        vector<double> ambient = configuration["General"]["color"].as_double_tuple_or_default({0, 0, 0});
+        vector<double> diffuse = {0, 0, 0};
+        vector<double> specular = {0, 0, 0};
+        Light light = Light(ambient, diffuse, specular);
+        lights.push_back(light);
+    }
+
     return figures;
 }
 
@@ -260,7 +293,7 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
                 Vector3D vectorPoint2 = Vector3D::point(figures[i].points[point_index2].x, figures[i].points[point_index2].y, figures[i].points[point_index2].z);
                 Point2D point1 = generatePoint2D(vectorPoint1, 1);
                 Point2D point2 = generatePoint2D(vectorPoint2, 1);
-                Line2D line = Line2D(point1, point2, figures[i].color, vectorPoint1.z, vectorPoint2.z);
+                Line2D line = Line2D(point1, point2, figures[i].ambientReflection, vectorPoint1.z, vectorPoint2.z);
                 lines.push_back(line);
             }
             // Add line from last point_index to first one
@@ -271,7 +304,7 @@ Lines2D Lsystem::doProjection(const Figures3D &figures){
             Point2D point1 = generatePoint2D(vectorPoint1, 1);
             Point2D point2 = generatePoint2D(vectorPoint2, 1);
 
-            Line2D line = Line2D(point1, point2, figures[i].color, vectorPoint1.z, vectorPoint1.z);
+            Line2D line = Line2D(point1, point2, figures[i].ambientReflection, vectorPoint1.z, vectorPoint1.z);
             lines.push_back(line);
         }
     }
@@ -454,7 +487,7 @@ vector<Face> Lsystem::triangulate(const Face &face) {
     return triangles;
 }
 
-img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int size, const vector<double> &backgroundColor) {
+img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int size, const vector<double> &backgroundColor, Lights3D &lights) {
     Lsystem lsystem3D;
     // 1. Triangulatie
     for (Figure &fig : figures) {
@@ -499,7 +532,7 @@ img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int siz
             Vector3D vectorPoint2 = Vector3D::point(fig.points[point_index2].x, fig.points[point_index2].y, fig.points[point_index2].z);
             Vector3D vectorPoint3 = Vector3D::point(fig.points[point_index3].x, fig.points[point_index3].y, fig.points[point_index3].z);
 
-            zbuffer.draw_zbuf_triag(zbuffer, image, vectorPoint1, vectorPoint2, vectorPoint3, d, dx, dy, fig.color);
+            zbuffer.draw_zbuf_triag(zbuffer, image, vectorPoint1, vectorPoint2, vectorPoint3, d, dx, dy, fig.ambientReflection, fig.diffuseReflection, fig.specularReflection, fig.reflectionCoefficient, lights);
 
         }
     }

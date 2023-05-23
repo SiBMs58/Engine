@@ -12,6 +12,8 @@ using namespace std;
 
 class Light {
 public:
+    Light(const vector<double> &ambientLight, const vector<double> &diffuseLight, const vector<double> &specularLight);
+
     //de ambiente licht component
     Color ambientLight;
     //de diffuse licht component

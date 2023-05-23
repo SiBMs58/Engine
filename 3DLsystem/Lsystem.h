@@ -19,7 +19,7 @@ using Lines2D = vector<Line2D>;
 class Lsystem {
 public:
     void applyDrawFunctions(Figure &figure, const double scale, const double rotateX, const double rotateY, const double rotateZ, const vector<double> vectorCenter);
-    vector<Figure> generateFigures(const ini::Configuration &configuration);
+    vector<Figure> generateFigures(const ini::Configuration &configuration, Lights3D &lights);
     void applyTransformation(Figure &fig, const Matrix &m);
     void applyTransformation(Figures3D &figs, const Matrix &m);
     Matrix eyePointTrans(Vector3D &eyepoint);
@@ -30,7 +30,7 @@ public:
     Figure drawLSystem(const LParser::LSystem3D &l_system);
 
     vector<Face> triangulate(const Face& face);
-    img::EasyImage drawZbufTriangles(vector<Figure>& figures, const int size, const vector<double> &backgroundColor);
+    img::EasyImage drawZbufTriangles(vector<Figure>& figures, const int size, const vector<double> &backgroundColor, Lights3D &lights);
 
     void generateFractal(Figure& fig, Figures3D& fractal, const int nr_iterations, const double scale);
 

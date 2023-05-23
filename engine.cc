@@ -48,7 +48,8 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         Lsystem2D lsystem;
         // Define lines
         Lines2D lines;
-        vector<Figure> figures = lystem3D.generateFigures(configuration);
+        Lights3D lights;
+        vector<Figure> figures = lystem3D.generateFigures(configuration, lights);
         lines = lystem3D.doProjection(figures);
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
@@ -61,7 +62,8 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         Lsystem2D lsystem;
         // Define lines
         Lines2D lines;
-        vector<Figure> figures = lystem3D.generateFigures(configuration);
+        Lights3D lights;
+        vector<Figure> figures = lystem3D.generateFigures(configuration, lights);
         lines = lystem3D.doProjection(figures);
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
@@ -73,11 +75,24 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         // Maak een Lsystem - 2DLsystem voor drawZbufLines function
         Lsystem2D lsystem;
         // Generate figures
-        vector<Figure> figures = lsystem3D.generateFigures(configuration);
+        Lights3D lights;
+        vector<Figure> figures = lsystem3D.generateFigures(configuration, lights);
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
-        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor);
+        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor, lights);
+    } else if (type == "LightedZBuffering"){
+        // Maak een lsystem3D
+        Lsystem lsystem3D;
+        // Maak een Lsystem - 2DLsystem voor drawZbufLines function
+        Lsystem2D lsystem;
+        // Define lines
+        Lights3D lights;
+        vector<Figure> figures = lsystem3D.generateFigures(configuration, lights);
+        // Draw image
+        int size = configuration["General"]["size"].as_int_or_die();
+        vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
+        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor, lights);
     }
     return image;
 }
