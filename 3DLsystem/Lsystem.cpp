@@ -248,7 +248,7 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
                 }
             }
     } else {
-        vector<double> ambient = configuration["General"]["color"].as_double_tuple_or_default({0, 0, 0});
+        vector<double> ambient = configuration["General"]["color"].as_double_tuple_or_default({1, 1, 1});
         vector<double> diffuse = {0, 0, 0};
         vector<double> specular = {0, 0, 0};
         Light* light = new Light(ambient, diffuse, specular);
