@@ -16,7 +16,42 @@ Light::Light(const vector<double> &ambient, const vector<double> &diffuse, const
     specularLight.blue = specular[2];
 }
 
-InfLight::InfLight(const vector<double> &ambientLight, const vector<double> &diffuseLight,
-                   const vector<double> &specularLight, const Vector3D &ldVector) : Light(ambientLight, diffuseLight,
-                                                                                          specularLight),
-                                                                                    ldVector(ldVector) {}
+string Light::getType() {
+    return "Light";
+}
+
+Vector3D Light::getLd() {
+    return Vector3D();
+}
+
+double Light::getAlpha(Vector3D &ld) {
+    return 0;
+}
+
+InfLight::InfLight(const vector<double> &ambient, const vector<double> &diffuse, const vector<double> &specular, const Vector3D &ld) : Light(ambient, diffuse, specular) {
+    ldVector = ld;
+}
+
+Vector3D InfLight::getLd() {
+    return ldVector;
+}
+
+string InfLight::getType() {
+    return "InfLight";
+}
+
+double InfLight::getAlpha(Vector3D &ld) {
+    return ldVector.x * ld.x + ldVector.y * ld.y + ldVector.z * ld.z;
+}
+
+PointLight::PointLight(const vector<double> &ambient, const vector<double> &diffuse, const vector<double> &specular, const Vector3D &loc) : Light(ambient, diffuse, specular){
+    location = loc;
+}
+
+Vector3D PointLight::getLd() {
+    return location;
+}
+
+string PointLight::getType() {
+    return "PointLight";
+}

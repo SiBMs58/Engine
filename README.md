@@ -26,8 +26,8 @@ X: Niet werkend of niet geïmplementeerd
 |   | BuckyBall                | V      |
 |   | Mengerspons              | V      |
 |   | View Frustum             | X      |
-| 7 | Ambient licht            |        |
-|   | Diffuus licht (oneindig) |        |
+| 7 | Ambient licht            | V      |
+|   | Diffuus licht (oneindig) | V      |
 |   | Diffuus licht (puntbron) |        |
 |   | Speculair licht          |        |
 | 8 | Schaduw                  |        |

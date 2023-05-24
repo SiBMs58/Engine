@@ -21,17 +21,23 @@ public:
     //de diffuse licht component
     Color specularLight;
 
+    virtual Vector3D getLd();
+    virtual string getType();
+    virtual double getAlpha(Vector3D &ld);
+
 };
 
-class InfLight: public Light
-{
+class InfLight: public Light {
 public:
-    InfLight(const vector<double> &ambientLight, const vector<double> &diffuseLight,
-             const vector<double> &specularLight, const Vector3D &ldVector);
-
     //de richting waarin het
     //licht schijnt
     Vector3D ldVector;
+
+    InfLight(const vector<double> &ambient, const vector<double> &diffuse, const vector<double> &specular, const Vector3D &ld);
+
+    virtual Vector3D getLd();
+    virtual string getType();
+    virtual double getAlpha(Vector3D &ld);
 };
 
 class PointLight: public Light
@@ -41,11 +47,16 @@ public:
     Vector3D location;
     //de hoek van een spotlicht
     double spotAngle;
+
+    PointLight(const vector<double> &ambient, const vector<double> &diffuse, const vector<double> &specular, const Vector3D &loc);
+
+    virtual Vector3D getLd();
+    virtual string getType();
 };
 
 
 
-typedef vector<Light> Lights3D;
+typedef vector<Light*> Lights3D;
 
 
 #endif //ENGINE_LIGHT_H

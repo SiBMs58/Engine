@@ -227,23 +227,31 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
             vector<double> specular = configuration["Light"+to_string(i)]["specularLight"].as_double_tuple_or_default({0, 0, 0});
 
             // Diffuse
+            // Oneindig
             if (configuration["Light"+to_string(i)]["infinity"].as_bool_or_default(false)) {
                 vector<double> direction = configuration["Light"+to_string(i)]["direction"].as_double_tuple_or_default({0, 0, 0});
                 Vector3D ld = Vector3D::vector(direction[0], direction[1], direction[2]);
                 ld *= eyePointTransformationMatrix;
                 Vector3D ldNormalized = -Vector3D::normalise(ld);
-                InfLight infLight = InfLight(ambient, diffuse, specular, ldNormalized);
+                InfLight* infLight = new InfLight(ambient, diffuse, specular, ldNormalized);
                 lights.push_back(infLight);
+            // Puntbron
+            } else if (configuration["Light"+to_string(i)]["location"].exists()) {
+                vector<double> location = configuration["Light"+to_string(i)]["location"].as_double_tuple_or_default({0, 0, 0});
+                Vector3D pos = Vector3D::point(location[0], location[1], location[2]);
+                PointLight* pointLight = new PointLight(ambient, diffuse, specular, pos);
+                lights.push_back(pointLight);
+                // Anderen alleen ambient
             } else {
-                Light light = Light(ambient, diffuse, specular);
-                lights.push_back(light);
+                    Light* light = new Light(ambient, diffuse, specular);
+                    lights.push_back(light);
+                }
             }
-        }
     } else {
         vector<double> ambient = configuration["General"]["color"].as_double_tuple_or_default({0, 0, 0});
         vector<double> diffuse = {0, 0, 0};
         vector<double> specular = {0, 0, 0};
-        Light light = Light(ambient, diffuse, specular);
+        Light* light = new Light(ambient, diffuse, specular);
         lights.push_back(light);
     }
 
