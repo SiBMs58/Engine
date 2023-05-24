@@ -576,7 +576,7 @@ Figure Wireframe3D::createCylinder(const int n, const double h) {
     Face bottomFace;
     for (int i = 0; i < n+1; ++i) {
         Vector3D pointTop = Vector3D::point(cos((2*i*M_PI)/n), sin((2*i*M_PI)/n), h);
-        bottomFace.point_indexes.push_back(i);
+        bottomFace.point_indexes.push_back(i+n+1);
         figure.points.push_back(pointTop);
     }
     figure.faces.push_back(bottomFace);
