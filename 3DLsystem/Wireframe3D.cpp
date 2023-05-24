@@ -699,14 +699,14 @@ Figure Wireframe3D::createBuckyBall() {
     vector<Face> newFaces;
     for (Face& face : buckyBall.faces) {
         Face currentFace = face;
+        int newPointsSize = newPoints.size();
         for (int i = 0; i < 3; ++i) {
             newPoints.push_back(buckyBall.points[currentFace.point_indexes[i % 3]] + (1.0 / 3) * (buckyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckyBall.points[currentFace.point_indexes[i % 3]])));
             newPoints.push_back(buckyBall.points[currentFace.point_indexes[i % 3]] + (2.0 / 3) * (buckyBall.points[currentFace.point_indexes[(i + 1) % 3]] - (buckyBall.points[currentFace.point_indexes[i % 3]])));
         }
-
         Face newFace; // Creëert point indexes e.g. 1, 2, 3, 4, 5, 6
-        for (int i = 0; i < 6; ++i) {
-            newFace.point_indexes.push_back(newPoints.size() - i);
+        for (int i = newPointsSize; i < newPoints.size(); ++i) {
+            newFace.point_indexes.push_back(i+1);
         }
         newFaces.push_back(newFace);
     }
