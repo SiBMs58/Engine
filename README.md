@@ -10,7 +10,7 @@ X: Niet werkend of niet geïmplementeerd
 |---|--------------------------|--------|
 | 1 | 2D L-systemen            | V      |
 |   | Met haakjes              | V      |
-|   | Stochastisch             | ?      |
+|   | Stochastisch             | X      |
 | 2 | Transformaties           | V      |
 |   | Eye-point                | V      |
 |   | Projectie                | V      |
@@ -29,7 +29,7 @@ X: Niet werkend of niet geïmplementeerd
 | 7 | Ambient licht            | V      |
 |   | Diffuus licht (oneindig) | V      |
 |   | Diffuus licht (puntbron) | V      |
-|   | Speculair licht          |        |
+|   | Speculair licht          | V      |
 | 8 | Schaduw                  |        |
 |   | Texture mapping          |        |
 | 9 | Bollen en cylinders      |        |
@@ -38,7 +38,7 @@ X: Niet werkend of niet geïmplementeerd
 
 Geïmplementeerde vorm van texture mapping: ...
 
-## Gekende problemen 
+## Gekende problemen
 ...
 ## Niet-gequoteerde functionaliteit
 ...

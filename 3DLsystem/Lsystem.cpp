@@ -83,8 +83,14 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
         } else if (figureType == "BuckyBall") {
             figure = wireframe.createBuckyBall();
         } else if (figureType == "MengerSponge") {
+            Figure cube = wireframe.createCube();
+            Figures3D mengerSponge;
             int nrIterations = configuration["Figure"+to_string(i)]["nrIterations"].as_int_or_die();
-            figure = wireframe.createMengerSponge(nrIterations);
+            generateMengerSponge(cube, mengerSponge, nrIterations);
+            for (int j = 0; j < mengerSponge.size(); ++j) {
+                figures.push_back(mengerSponge[j]);
+            }
+            fractal = true;
         } else if (figureType == "LineDrawing") {
             int nrPoints = configuration["Figure"+to_string(i)]["nrPoints"].as_int_or_die();
             int nrLines = configuration["Figure"+to_string(i)]["nrLines"].as_int_or_die();
@@ -222,33 +228,43 @@ vector<Figure> Lsystem::generateFigures(const ini::Configuration &configuration,
     if (lighted) {
         int nrLights = configuration["General"]["nrLights"].as_int_or_default(0);
         for (int i = 0; i < nrLights; ++i) {
-            vector<double> ambient = configuration["Light"+to_string(i)]["ambientLight"].as_double_tuple_or_default({0, 0, 0});
-            vector<double> diffuse = configuration["Light"+to_string(i)]["diffuseLight"].as_double_tuple_or_default({0, 0, 0});
-            vector<double> specular = configuration["Light"+to_string(i)]["specularLight"].as_double_tuple_or_default({0, 0, 0});
-
+            vector<double> ambient = configuration["Light" + to_string(i)]["ambientLight"].as_double_tuple_or_default(
+                    {1, 1, 1});
+            vector<double> diffuse = configuration["Light" + to_string(i)]["diffuseLight"].as_double_tuple_or_default(
+                    {0, 0, 0});
+            vector<double> specular = configuration["Light" + to_string(i)]["specularLight"].as_double_tuple_or_default(
+                    {0, 0, 0});
+            bool infinityAttributeExist = false;
+            bool infinity;
+            if (configuration["Light" + to_string(i)]["infinity"].exists()) {
+                infinity = configuration["Light" + to_string(i)]["infinity"].as_bool_or_die();
+                infinityAttributeExist = true;
+            }
             // Diffuse
-            // Oneindig
-            if (configuration["Light"+to_string(i)]["infinity"].as_bool_or_default(false)) {
-                vector<double> direction = configuration["Light"+to_string(i)]["direction"].as_double_tuple_or_default({0, 0, 0});
-                Vector3D ld = Vector3D::vector(direction[0], direction[1], direction[2]);
-                ld *= eyePointTransformationMatrix;
-                InfLight* infLight = new InfLight(ambient, diffuse, specular, ld);
-                lights.push_back(infLight);
-            // Puntbron
-            } else if (configuration["Light"+to_string(i)]["location"].exists()) {
-                vector<double> location = configuration["Light"+to_string(i)]["location"].as_double_tuple_or_default({0, 0, 0});
-                Vector3D pos = Vector3D::point(location[0], location[1], location[2]);
-                pos = pos * eyePointTransformationMatrix;
-                double spotAngle = configuration["Light"+to_string(i)]["spotAngle"].as_double_or_default(90);
-                PointLight* pointLight = new PointLight(ambient, diffuse, specular, pos);
-                pointLight->setSpotAngle(spotAngle*M_PI/180);
-                lights.push_back(pointLight);
-                // Anderen alleen ambient
-            } else {
-                    Light* light = new Light(ambient, diffuse, specular);
-                    lights.push_back(light);
+            if (infinityAttributeExist) {
+                // Oneindig
+                if (infinity) {
+                    vector<double> direction = configuration["Light" +
+                                                             to_string(i)]["direction"].as_double_tuple_or_default(
+                            {1, 1, 1});
+                    Vector3D ld = Vector3D::vector(direction[0], direction[1], direction[2]);
+                    ld *= eyePointTransformationMatrix;
+                    InfLight *infLight = new InfLight(ambient, diffuse, specular, ld);
+                    lights.push_back(infLight);
+                    // Puntbron
+                } else if (!infinity) {
+                    vector<double> location = configuration["Light" +
+                                                            to_string(i)]["location"].as_double_tuple_or_default(
+                            {1, 1, 1});
+                    Vector3D pos = Vector3D::point(location[0], location[1], location[2]);
+                    pos *= eyePointTransformationMatrix;
+                    double spotAngle = configuration["Light" + to_string(i)]["spotAngle"].as_double_or_default(90);
+                    PointLight *pointLight = new PointLight(ambient, diffuse, specular, pos);
+                    pointLight->setSpotAngle(spotAngle * M_PI / 180);
+                    lights.push_back(pointLight);
                 }
             }
+        }
     } else {
         vector<double> ambient = configuration["General"]["color"].as_double_tuple_or_default({1, 1, 1});
         vector<double> diffuse = {0, 0, 0};
@@ -507,7 +523,7 @@ vector<Face> Lsystem::triangulate(const Face &face) {
     return triangles;
 }
 
-img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int size, const vector<double> &backgroundColor, Lights3D &lights, Vector3D &eye) {
+img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int size, const vector<double> &backgroundColor, Lights3D &lights) {
     Lsystem lsystem3D;
     // 1. Triangulatie
     for (Figure &fig : figures) {
@@ -552,7 +568,7 @@ img::EasyImage Lsystem::drawZbufTriangles(vector<Figure> &figures, const int siz
             Vector3D vectorPoint2 = Vector3D::point(fig.points[point_index2].x, fig.points[point_index2].y, fig.points[point_index2].z);
             Vector3D vectorPoint3 = Vector3D::point(fig.points[point_index3].x, fig.points[point_index3].y, fig.points[point_index3].z);
 
-            zbuffer.draw_zbuf_triag(zbuffer, image, vectorPoint1, vectorPoint2, vectorPoint3, d, dx, dy, fig.ambientReflection, fig.diffuseReflection, fig.specularReflection, fig.reflectionCoefficient, lights, eye);
+            zbuffer.draw_zbuf_triag(zbuffer, image, vectorPoint1, vectorPoint2, vectorPoint3, d, dx, dy, fig.ambientReflection, fig.diffuseReflection, fig.specularReflection, fig.reflectionCoefficient, lights);
 
         }
     }
@@ -573,6 +589,47 @@ void Lsystem::generateFractal(Figure &fig, Figures3D &fractal, const int nr_iter
                 Figure fig2 = fig;
                 // 2. Schaal de punten van de nieuwe figuur
                 Matrix scaleMatrix = fig2.scaleFigure(1/scale);
+                applyTransformation(fig2, scaleMatrix);
+                Vector3D pi = fig.points[j];
+                Vector3D pib = fig2.points[j];
+                // 3. Verplaats de nieuwe figuur naar de juiste plaats
+                Matrix transMatrix = fig2.translate(pi - pib);
+                applyTransformation(fig2, transMatrix);
+
+                newFractals.push_back(fig2);
+            }
+        }
+        fractal = newFractals;
+    }
+
+}
+
+
+void Lsystem::generateMengerSponge(Figure &fig, Figures3D &fractal, const int nr_iterations) {
+    fig.points.push_back(Vector3D::point(0, -1, 1));
+    fig.points.push_back(Vector3D::point(0, -1, -1));
+    fig.points.push_back(Vector3D::point(0, 1, 1));
+    fig.points.push_back(Vector3D::point(0, 1, -1));
+    fig.points.push_back(Vector3D::point(-1, 0, 1));
+    fig.points.push_back(Vector3D::point(-1, 0, -1));
+    fig.points.push_back(Vector3D::point(1, 0, 1));
+    fig.points.push_back(Vector3D::point(1, 0, -1));
+    fig.points.push_back(Vector3D::point(-1, -1, 0));
+    fig.points.push_back(Vector3D::point(1, -1, 0));
+    fig.points.push_back(Vector3D::point(-1, 1, 0));
+    fig.points.push_back(Vector3D::point(1, 1, 0));
+
+    fractal.push_back(fig);
+
+    // Voer deze operatie in totaal nr_iterations keer uit
+    for (int i = 0; i < nr_iterations; ++i) {
+        Figures3D newFractals;
+        for (Figure fig: fractal) {
+            for (int j = 0; j < fig.points.size(); ++j) {
+                // 1. Kopieer de oorspronkelijke figuur
+                Figure fig2 = fig;
+                // 2. Schaal de punten van de nieuwe figuur
+                Matrix scaleMatrix = fig2.scaleFigure(1/3.0);
                 applyTransformation(fig2, scaleMatrix);
                 Vector3D pi = fig.points[j];
                 Vector3D pib = fig2.points[j];

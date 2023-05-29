@@ -20,7 +20,6 @@ public:
     Figure createTorus(const double r,const double R, const int n, const int m);
 
     Figure createBuckyBall();
-    Figure createMengerSponge(const int nrIterations);
 };
 
 

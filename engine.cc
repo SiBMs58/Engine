@@ -80,9 +80,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
-        vector<double> eyeVector = configuration["General"]["eye"].as_double_tuple_or_die();
-        Vector3D eye = Vector3D::vector(eyeVector[0], eyeVector[1], eyeVector[2]);
-        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor, lights, eye);
+        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor, lights);
     } else if (type == "LightedZBuffering"){
         // Maak een lsystem3D
         Lsystem lsystem3D;
@@ -94,9 +92,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
         // Draw image
         int size = configuration["General"]["size"].as_int_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
-        vector<double> eyeVector = configuration["General"]["eye"].as_double_tuple_or_die();
-        Vector3D eye = Vector3D::vector(eyeVector[0], eyeVector[1], eyeVector[2]);
-        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor, lights, eye);
+        image = lsystem3D.drawZbufTriangles(figures, size, backgroundColor, lights);
     }
     return image;
 }
