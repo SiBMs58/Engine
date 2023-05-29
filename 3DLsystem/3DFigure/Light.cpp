@@ -28,6 +28,10 @@ double Light::getAlpha(Vector3D &ld) {
     return 0;
 }
 
+double Light::getSpotAngle() {
+    return 0;
+}
+
 InfLight::InfLight(const vector<double> &ambient, const vector<double> &diffuse, const vector<double> &specular, const Vector3D &ld) : Light(ambient, diffuse, specular) {
     ldVector = ld;
 }
@@ -44,6 +48,10 @@ double InfLight::getAlpha(Vector3D &ld) {
     return ldVector.x * ld.x + ldVector.y * ld.y + ldVector.z * ld.z;
 }
 
+double InfLight::getSpotAngle() {
+    return 0;
+}
+
 PointLight::PointLight(const vector<double> &ambient, const vector<double> &diffuse, const vector<double> &specular, const Vector3D &loc) : Light(ambient, diffuse, specular){
     location = loc;
 }
@@ -54,4 +62,12 @@ Vector3D PointLight::getLd() {
 
 string PointLight::getType() {
     return "PointLight";
+}
+
+double PointLight::getSpotAngle() {
+    return spotAngle;
+}
+
+void PointLight::setSpotAngle(double spotAngle) {
+    this->spotAngle = spotAngle;
 }

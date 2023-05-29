@@ -28,7 +28,7 @@ X: Niet werkend of niet geïmplementeerd
 |   | View Frustum             | X      |
 | 7 | Ambient licht            | V      |
 |   | Diffuus licht (oneindig) | V      |
-|   | Diffuus licht (puntbron) |        |
+|   | Diffuus licht (puntbron) | V      |
 |   | Speculair licht          |        |
 | 8 | Schaduw                  |        |
 |   | Texture mapping          |        |

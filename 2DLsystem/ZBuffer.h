@@ -21,8 +21,7 @@ public:
 
     void draw_zbuf_line(ZBuffer &, img::EasyImage &, const unsigned int x0, const unsigned int y0, const double z0,const unsigned int x1, const unsigned int y1, const double z1, Color &color);
     void draw_zbuf_triag(ZBuffer &, img::EasyImage &, const Vector3D &A, const Vector3D &B, const Vector3D &C,
-                         double d, double dx, double dy, Color ambientReflection, Color diffuseReflection, Color specularReflection, double reflectionCoefficient, Lights3D& lights);
-
+                         double d, double dx, double dy, Color ambientReflection, Color diffuseReflection, Color specularReflection, double reflectionCoefficient, Lights3D& lights, Vector3D& eye);
 };
 
 

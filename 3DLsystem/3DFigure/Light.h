@@ -24,6 +24,7 @@ public:
     virtual Vector3D getLd();
     virtual string getType();
     virtual double getAlpha(Vector3D &ld);
+    virtual double getSpotAngle();
 
 };
 
@@ -38,6 +39,8 @@ public:
     virtual Vector3D getLd();
     virtual string getType();
     virtual double getAlpha(Vector3D &ld);
+    virtual double getSpotAngle();
+
 };
 
 class PointLight: public Light
@@ -52,6 +55,8 @@ public:
 
     virtual Vector3D getLd();
     virtual string getType();
+    virtual double getSpotAngle();
+    void setSpotAngle(double spotAngle);
 };
 
 

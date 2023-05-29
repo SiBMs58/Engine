@@ -762,43 +762,82 @@ Figure Wireframe3D::createBuckyBall() {
 }
 
 Figure Wireframe3D::createMengerSponge(const int n) {
+    /*
+    * fig.points.push_back(Vector3D::point(0, -1, 1));
+   fig.points.push_back(Vector3D::point(0, -1, -1));
+   fig.points.push_back(Vector3D::point(0, 1, 1));
+   fig.points.push_back(Vector3D::point(0, 1, -1));
+   fig.points.push_back(Vector3D::point(-1, 0, 1));
+   fig.points.push_back(Vector3D::point(-1, 0, -1));
+   fig.points.push_back(Vector3D::point(1, 0, 1));
+   fig.points.push_back(Vector3D::point(1, 0, -1));
+   fig.points.push_back(Vector3D::point(-1, -1, 0));
+   fig.points.push_back(Vector3D::point(1, -1, 0));
+   fig.points.push_back(Vector3D::point(-1, 1, 0));
+   fig.points.push_back(Vector3D::point(1, 1, 0));
+   std::vector<Figure> toConvert = {fig};
+   std::vector<Figure> newFigs;
+
+   for (unsigned int it = 0; it < nrIterations; it++) {
+       newFigs.clear();
+       for (auto & curFig : toConvert) {
+           for (unsigned int pointIndex = 0; pointIndex < curFig.points.size(); pointIndex++) {
+               Vector3D curPoint = curFig.points[pointIndex];
+
+               Figure newFig = curFig;
+               Matrix S = Transformation::scaleFigure(1.0/3.0);
+               Transformation::applyTransformation(newFig, S);
+
+               Matrix T = Transformation::translate(curPoint - newFig.points[pointIndex]);
+               Transformation::applyTransformation(newFig, T);
+
+               newFigs.push_back(newFig);
+           }
+       }
+       toConvert = newFigs;
+   }
+
+   Figures3D result;
+   for (auto &curFig : newFigs) result.push_back(curFig);
+   return result;
+    */
     if (n <= 0) {
         return createCube();
     }
 
     // 1. Begin met een kubus
-    vector<Vector3D> cube;
+    Figure cube;
     // 2. Verdeel elk vlak van de kubus in negen vierkanten, zoals Rubik's Cube. Dit verdeelt de kubus in 27 kleinere kubussen.
-    cube.push_back(Vector3D::point(1, -1, -1)); // 1
-    cube.push_back(Vector3D::point(-1, 1, -1)); // 2
-    cube.push_back(Vector3D::point(1, 1, 1)); // 3
-    cube.push_back(Vector3D::point(-1, -1, 1)); // 4
-    cube.push_back(Vector3D::point(1, 1, -1)); // 5
-    cube.push_back(Vector3D::point(-1, -1, -1)); // 6
-    cube.push_back(Vector3D::point(1, -1, 1)); // 7
-    cube.push_back(Vector3D::point(-1, 1, 1)); // 8
-    cube.push_back(Vector3D::point(1, 0, -1));
-    cube.push_back(Vector3D::point(-1, 0, -1));
-    cube.push_back(Vector3D::point(1, 0, 1));
-    cube.push_back(Vector3D::point(-1, 0, 1));
-    cube.push_back(Vector3D::point(0, 1, -1));
-    cube.push_back(Vector3D::point(0, -1, -1));
-    cube.push_back(Vector3D::point(0, 1, 1));
-    cube.push_back(Vector3D::point(0, -1, 1));
-    cube.push_back(Vector3D::point(-1, -1, 0));
-    cube.push_back(Vector3D::point(1, -1, 0));
-    cube.push_back(Vector3D::point(1, 1, 0));
-    cube.push_back(Vector3D::point(-1, 1, 0));
+    cube.points.push_back(Vector3D::point(1, -1, -1)); // 1
+    cube.points.push_back(Vector3D::point(-1, 1, -1)); // 2
+    cube.points.push_back(Vector3D::point(1, 1, 1)); // 3
+    cube.points.push_back(Vector3D::point(-1, -1, 1)); // 4
+    cube.points.push_back(Vector3D::point(1, 1, -1)); // 5
+    cube.points.push_back(Vector3D::point(-1, -1, -1)); // 6
+    cube.points.push_back(Vector3D::point(1, -1, 1)); // 7
+    cube.points.push_back(Vector3D::point(-1, 1, 1)); // 8
+    cube.points.push_back(Vector3D::point(1, 0, -1));
+    cube.points.push_back(Vector3D::point(-1, 0, -1));
+    cube.points.push_back(Vector3D::point(1, 0, 1));
+    cube.points.push_back(Vector3D::point(-1, 0, 1));
+    cube.points.push_back(Vector3D::point(0, 1, -1));
+    cube.points.push_back(Vector3D::point(0, -1, -1));
+    cube.points.push_back(Vector3D::point(0, 1, 1));
+    cube.points.push_back(Vector3D::point(0, -1, 1));
+    cube.points.push_back(Vector3D::point(-1, -1, 0));
+    cube.points.push_back(Vector3D::point(1, -1, 0));
+    cube.points.push_back(Vector3D::point(1, 1, 0));
+    cube.points.push_back(Vector3D::point(-1, 1, 0));
 
     // 3. Verwijder de kleinere kubus in het midden van elk vlak en verwijder de kleinere kubus in het midden van de meer gigantische kubus, waardoor er 20 kleinere kubussen overblijven.
-    vector<Figure> sponge;
-    for (int j = 0; j < cube.size(); ++j) {
+    Figures3D sponge;
+    for (int j = 0; j < cube.points.size(); ++j) {
         Figure fig = createMengerSponge(n-1);
         Matrix scaleMatrix = fig.scaleFigure(1.0 / 3);
         for (int i = 0; i < fig.points.size(); ++i) {
             fig.points[i] = fig.points[i]*scaleMatrix;
         }
-        Matrix translateMatrix = fig.translate(Vector3D::vector((2.0/ 3) * (cube[j].x), (2.0/ 3) * (cube[j].y), (2.0/ 3) * (cube[j].z)));
+        Matrix translateMatrix = fig.translate(Vector3D::vector((2.0/ 3) * (cube.points[j].x), (2.0/ 3) * (cube.points[j].y), (2.0/ 3) * (cube.points[j].z)));
         for (int i = 0; i < fig.points.size(); ++i) {
             fig.points[i] = fig.points[i]*translateMatrix;
         }

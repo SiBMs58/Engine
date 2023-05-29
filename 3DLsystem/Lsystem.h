@@ -30,7 +30,7 @@ public:
     Figure drawLSystem(const LParser::LSystem3D &l_system);
 
     vector<Face> triangulate(const Face& face);
-    img::EasyImage drawZbufTriangles(vector<Figure>& figures, const int size, const vector<double> &backgroundColor, Lights3D &lights);
+    img::EasyImage drawZbufTriangles(vector<Figure>& figures, const int size, const vector<double> &backgroundColor, Lights3D &lights, Vector3D &eye);
 
     void generateFractal(Figure& fig, Figures3D& fractal, const int nr_iterations, const double scale);
 
