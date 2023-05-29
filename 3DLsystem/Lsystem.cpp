@@ -604,7 +604,6 @@ void Lsystem::generateFractal(Figure &fig, Figures3D &fractal, const int nr_iter
 
 }
 
-
 void Lsystem::generateMengerSponge(Figure &fig, Figures3D &fractal, const int nr_iterations) {
     fig.points.push_back(Vector3D::point(0, -1, 1));
     fig.points.push_back(Vector3D::point(0, -1, -1));
